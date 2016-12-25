@@ -27,6 +27,12 @@ verbose = true
 # Please use logging_context_format_string and logging_default_format_string
 # instead. (string value)
 #log_format = <None>
+
+# List of directories to search for plug-ins. (list value)
+{%- if server.get('dir', {}).plugins is defined %}
+plugin_dirs={{ server.dir.plugins|join(",") }}
+{%- endif %}
+
 heat_metadata_server_url=http://{{ server.metadata.host }}:{{ server.metadata.port }}
 
 # URL of the Heat waitcondition server. (string value)
@@ -783,17 +789,17 @@ admin_tenant_name = {{ server.identity.tenant }}
 # notification. (floating point value)
 # Deprecated group/name - [DEFAULT]/kombu_reconnect_delay
 #kombu_reconnect_delay = 1.0
-
-# The RabbitMQ broker address where a single node is used. (string value)
-# Deprecated group/name - [DEFAULT]/rabbit_host
+{%- if server.message_queue.members is defined %}
+rabbit_hosts = {% for member in server.message_queue.members -%}
+                   {{ member.host }}:{{ member.get('port', 5672) }}
+                   {%- if not loop.last -%},{%- endif -%}
+               {%- endfor -%}
+{%- else %}
 rabbit_host = {{ server.message_queue.host }}
-
-# The RabbitMQ broker port where a single node is used.
-# (integer value)
 rabbit_port = {{ server.message_queue.port }}
+{%- endif %}
 
-# RabbitMQ HA cluster host:port pairs. (list value)
-#rabbit_hosts=$rabbit_host:$rabbit_port
+
 
 # Connect over SSL for RabbitMQ. (boolean value)
 #rabbit_use_ssl=false
@@ -821,11 +827,6 @@ rabbit_virtual_host = {{ server.message_queue.virtual_host }}
 # Maximum number of RabbitMQ connection retries. Default is 0
 # (infinite retry count). (integer value)
 #rabbit_max_retries=0
-
-# Use HA queues in RabbitMQ (x-ha-policy: all). If you change
-# this option, you must wipe the RabbitMQ database. (boolean
-# value)
-rabbit_ha_queues={{ server.message_queue.ha_queues }}
 
 #rabbit_host = localhost
 
@@ -918,5 +919,17 @@ tenant={{ client.identity.tenant }}
 auth_host_ip={{ client.identity.host }}
 api_server={{ client.api.host }}
 api_port={{ client.api.port }}
+
+{%- endif %}
+
+{%- if pillar.get('salt', {}).get('client', {}).get('enabled', False) %}
+
+{%- set client = pillar.get('salt', {}).get('client', {}) %}
+
+[clients_salt]
+
+user={{ client.user }}
+password={{ client.password }}
+host={{ client.host }}
 
 {%- endif %}

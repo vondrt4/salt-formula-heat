@@ -9,9 +9,9 @@ heat:
       domain: heat
     bind:
       api_cfn:
-        address: 127.0.0.1
+        address: 0.0.0.0
       api_cloudwatch:
-        address: 127.0.0.1
+        address: 0.0.0.0
       api:
         address: 127.0.0.1
     database:
@@ -39,10 +39,12 @@ heat:
       password: password
     message_queue:
       engine: rabbitmq
-      members:
-      - host: 127.0.0.1
-      - host: 127.0.1.1
-      - host: 127.0.2.1
+      host: 127.0.0.1
+      port: 5672
       user: openstack
       password: password
       virtual_host: '/openstack'
+    dir:
+      plugins:
+      - /test/dir1
+      - /test/dir2
