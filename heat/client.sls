@@ -12,16 +12,21 @@ heat_client_home:
   file.directory:
   - name: /srv/heat
 
-{%- if client.source.engine == 'git' %}
 
-{{ client.source.address }}:
+{%- for project_name, project in client.template.iteritems() %}
+
+{%- if project.source.engine == 'git' %}
+
+{{ project.source.address }}:
   git.latest:
-  - target: /srv/heat/env
-  - rev: {{ client.source.revision }}
+  - target: /srv/heat/env/{{ project.domain }}/{{ project_name }}
+  - rev: {{ project.source.revision }}
   - require:
     - pkg: git_packages
     - file: /srv/heat
 
 {%- endif %}
+
+{%- endfor %}
 
 {%- endif %}

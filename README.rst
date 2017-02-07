@@ -69,10 +69,20 @@ Heat client with specified git templates
     heat:
       client:
         enabled: true
-        source:
-          engine: git
-          address: git@repo.domain.com/heat-templates.git
-          revision: master
+        template:
+          admin:
+            domain: default
+            source:
+              engine: git
+              address: git@repo.domain.com/admin-templates.git
+              revision: master
+          default:
+            domain: default
+            source:
+              engine: git
+              address: git@repo.domain.com/default-templates.git
+              revision: master
+
 
 Heat system definition of several stacks/systems 
 
