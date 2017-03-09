@@ -918,6 +918,12 @@ keystone_ec2_uri=http://{{ server.identity.host }}:5000/v2.0/ec2tokens
 
 {%- from "opencontrail/map.jinja" import client with context %}
 
+[clients]
+endpoint_type = {{ server.identity.get('endpoint_type_default', 'publicURL') }}
+
+[clients_heat]
+endpoint_type = {{ server.identity.get('endpoint_type_heat',
+                                       server.identity.get('endpoint_type_default', 'publicURL')) }}
 [clients_contrail]
 
 user={{ client.identity.user }}

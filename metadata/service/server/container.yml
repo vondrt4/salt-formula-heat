@@ -1,4 +1,7 @@
 parameters:
+  _param:
+    heat_client_default_endpoint_type: internalURL
+    heat_client_heat_endpoint_type: publicURL
   kubernetes:
     control:
       configmap:
@@ -45,6 +48,8 @@ parameters:
                   tenant: service
                   user: heat
                   password: ${_param:keystone_heat_password}
+                  endpoint_type_default: ${_param:heat_client_default_endpoint_type}
+                  endpoint_type_heat: ${_param:heat_client_heat_endpoint_type}
                 message_queue:
                   engine: rabbitmq
                   host: ${_param:rabbitmq_service_host}

@@ -53,6 +53,8 @@ Single Heat services on the controller node
           tenant: service
           user: heat
           password: password
+          endpoint_type_default: internalURL
+          endpoint_type_heat: publicURL
         message_queue:
           engine: rabbitmq
           host: 10.0.106.20

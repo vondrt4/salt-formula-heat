@@ -742,6 +742,12 @@ auth_uri=http://{{ server.identity.host }}:5000/v2.0
 
 keystone_ec2_uri=http://{{ server.identity.host }}:5000/v2.0/ec2tokens
 
+[clients]
+endpoint_type = {{ server.identity.get('endpoint_type_default', 'publicURL') }}
+
+[clients_heat]
+endpoint_type = {{ server.identity.get('endpoint_type_heat',
+                                       server.identity.get('endpoint_type_default', 'publicURL')) }}
 [clients_keystone]
 auth_uri=http://{{ server.identity.host }}:35357
 

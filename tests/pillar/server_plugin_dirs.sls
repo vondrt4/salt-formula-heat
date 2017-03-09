@@ -40,6 +40,7 @@ heat:
       admin_tenant: admin
       admin_user: admin
       admin_password: admin
+      endpoint_type_default: internalURL
     message_queue:
       engine: rabbitmq
       host: 127.0.0.1

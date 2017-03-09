@@ -587,7 +587,7 @@ log_file=/var/log/heat/heat.log
 
 # Type of endpoint in Identity service catalog to use for
 # communication with the OpenStack service. (string value)
-#endpoint_type=publicURL
+endpoint_type = {{ server.identity.get('endpoint_type_default', 'publicURL') }}
 
 # Optional CA cert file to use in SSL connections. (string
 # value)
@@ -605,6 +605,10 @@ log_file=/var/log/heat/heat.log
 # (boolean value)
 #insecure=false
 
+
+[clients_heat]
+endpoint_type = {{ server.identity.get('endpoint_type_heat',
+                                       server.identity.get('endpoint_type_default', 'publicURL')) }}
 
 [clients_ceilometer]
 

@@ -40,6 +40,8 @@ heat:
       admin_tenant: admin
       admin_user: admin
       admin_password: admin
+      endpoint_type_default: internalURL
+      endpoint_type_heat: publicURL
     message_queue:
       engine: rabbitmq
       members:
