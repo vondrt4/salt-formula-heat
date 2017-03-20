@@ -17,3 +17,49 @@ dashboard:
               cluster_status:
                 rawQuery: true
                 query: SELECT last(value) FROM cluster_status WHERE cluster_name = 'heat' AND environment_label = '$environment' AND $timeFilter GROUP BY time($interval) fill(null)
+  service_level:
+    row:
+      heat-service-level:
+        title: Heat Service Levels
+        panel:
+          heat-control-uptime:
+            title: Heat Control Uptime
+            target:
+              heat-control-healthy-status:
+                alias: "Healthy"
+                rawQuery: true
+                query: SELECT count(value) FROM cluster_status WHERE environment_label = '$environment' AND cluster_name = 'heat' AND value = 0 AND $timeFilter
+              heat-control-degraded-unknwon-status:
+                alias: "Degraded or Unknwon"
+                rawQuery: true
+                query: SELECT count(value) FROM cluster_status WHERE environment_label = '$environment' AND cluster_name = 'heat' AND (value = 1 OR value = 2 OR value = 3) AND $timeFilter
+              heat-control-down-status:
+                alias: "Down"
+                rawQuery: true
+                query: SELECT count(value) FROM cluster_status WHERE environment_label = '$environment' AND cluster_name = 'heat' AND value = 4 AND $timeFilter
+          heat-api-availability:
+            title: Heat API Availability (including cfn-api)
+            target:
+              heat-api-up-status:
+                alias: "Up"
+                rawQuery: true
+                query: SELECT count(value) FROM openstack_check_api WHERE environment_label = '$environment' AND (service = 'heat-api' OR service = 'heat-cfn-api') AND value = 1 AND $timeFilter
+              heat-api-down-status:
+                alias: "Down"
+                rawQuery: true
+                query: SELECT count(value) FROM openstack_check_api WHERE environment_label = '$environment' AND (service = 'heat-api' OR service = 'heat-cfn-api') AND value = 0 AND $timeFilter
+          heat-api-requests:
+            title: Heat API Requests
+            target:
+              heat-api-okay-status:
+                alias: "Okay"
+                rawQuery: true
+                query: SELECT count(max) FROM openstack_heat_http_response_times WHERE environment_label = '$environment' AND (http_status = '2xx' OR http_status = '3xx') AND $timeFilter
+              heat-api-error-status:
+                alias: "Error"
+                rawQuery: true
+                query: SELECT count(max) FROM openstack_heat_http_response_times WHERE environment_label = '$environment' AND http_status = '4xx' AND $timeFilter
+              heat-api-fatal-status:
+                alias: "Fatal"
+                rawQuery: true
+                query: SELECT count(max) FROM openstack_heat_http_response_times WHERE environment_label = '$environment' AND http_status = '5xx' AND $timeFilter
