@@ -445,8 +445,8 @@ auth_url = http://{{ server.identity.host }}:35357
 username = {{ server.identity.user }}
 password = {{ server.identity.password }}
 user_domain_name = default
-project_domain_id=Default
-user_domain_id=Default
+project_domain_id = {{ server.identity.get('domain', 'default') }}
+user_domain_id = {{ server.identity.get('domain', 'default') }}
 
 [matchmaker_redis]
 
