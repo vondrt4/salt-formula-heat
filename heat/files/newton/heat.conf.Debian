@@ -205,9 +205,9 @@ transport_url = rabbit://{% for member in server.message_queue.members -%}
                              {{ server.message_queue.user }}:{{ server.message_queue.password }}@{{ member.host }}:{{ member.get('port', 5672) }}
                              {%- if not loop.last -%},{%- endif -%}
                          {%- endfor -%}
-                             {{ server.message_queue.virtual_host }}
+                             /{{ server.message_queue.virtual_host }}
 {%- else %}
-transport_url = rabbit://{{ server.message_queue.user }}:{{ server.message_queue.password }}@{{ server.message_queue.host }}:{{ member.get('port', 5672) }}{{ server.message_queue.virtual_host }}
+transport_url = rabbit://{{ server.message_queue.user }}:{{ server.message_queue.password }}@{{ server.message_queue.host }}:{{ server.message_queue.port }}{{ server.message_queue.virtual_host }}
 {%- endif %}
 # The default exchange under which topics are scoped. May be overridden by an
 # exchange name specified in the transport_url option. (string value)
@@ -346,7 +346,7 @@ bind_host = {{ server.bind.api_cloudwatch.address }}
 # Deprecated group/name - [DATABASE]/sql_connection
 # Deprecated group/name - [sql]/connection
 #connection = <None>
-connection = {{ server.database.engine }}+pymysql://{{ server.database.user }}:{{ server.database.password }}@{{ server.database.host }}/{{ server.database.name }}?charset=utf8&read_timeout=60
+connection = {{ server.database.engine }}+pymysql://{{ server.database.user }}:{{ server.database.password }}@{{ server.database.host }}/{{ server.database.name }}?charset=utf8
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)
@@ -428,7 +428,7 @@ max_overflow = 60
 
 [keystone_authtoken]
 
-#auth_type = password
+auth_type = password
 auth_uri=http://{{ server.identity.host }}:5000/v2.0
 #identity_uri=http://{{ server.identity.host }}:35357
 #admin_user={{ server.identity.user }}
@@ -439,6 +439,7 @@ username = {{ server.identity.user }}
 password = {{ server.identity.password }}
 project_name = {{ server.identity.tenant }}
 project_domain_name = Default
+user_domain_name = Default
 {%- if server.cache is defined %}
 memcached_servers={%- for member in server.cache.members %}{{ member.host }}:11211{% if not loop.last %},{% endif %}{%- endfor %}
 {%- endif %}
