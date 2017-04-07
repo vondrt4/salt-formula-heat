@@ -27,12 +27,15 @@ Single Heat services on the controller node
           metadata:
             address: 10.0.106.10
             port: 8000
+            protocol: http
           waitcondition:
             address: 10.0.106.10
             port: 8000
+            protocol: http
           watch:
             address: 10.0.106.10
             port: 8003
+            protocol: http
         cloudwatch:
           host: 10.0.106.20
         api:

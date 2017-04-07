@@ -35,12 +35,15 @@ parameters:
                 metadata:
                   host: 0.0.0.0
                   port: 8000
+                  protocol: http
                 waitcondition:
                   host: 0.0.0.0
                   port: 8000
+                  protocol: http
                 watch:
                   host: 0.0.0.0
                   port: 8003
+                  protocol: http
                 identity:
                   engine: keystone
                   host: ${_param:keystone_service_host}

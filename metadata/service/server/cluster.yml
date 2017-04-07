@@ -32,12 +32,15 @@ parameters:
       metadata:
         host: ${_param:cluster_vip_address}
         port: 8000
+        protocol: http
       waitcondition:
         host: ${_param:cluster_vip_address}
         port: 8000
+        protocol: http
       watch:
         host: ${_param:cluster_vip_address}
         port: 8003
+        protocol: http
       identity:
         engine: keystone
         host: ${_param:cluster_vip_address}
