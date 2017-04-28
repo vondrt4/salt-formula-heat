@@ -3,12 +3,14 @@
     'Debian': {
         'pkgs': ['heat-api', 'heat-api-cfn', 'heat-api-cloudwatch', 'heat-engine', 'heat-common','python-heatclient', 'gettext-base'],
         'services': ['heat-api', 'heat-api-cfn', 'heat-api-cloudwatch', 'heat-engine'],
-        'notification': False
+        'notification': False,
+        'cors': {}
     },
     'RedHat': {
         'pkgs': ['openstack-heat-api', 'openstack-heat-api-cfn', 'openstack-heat-api-cloudwatch', 'openstack-heat-engine', 'openstack-heat-common'],
         'services': ['openstack-heat-api', 'openstack-heat-api-cfn', 'openstack-heat-api-cloudwatch', 'openstack-heat-engine'],
-        'notification': False
+        'notification': False,
+        'cors': {}
     },
 }, merge=pillar.heat.get('server', {})) %}
 
