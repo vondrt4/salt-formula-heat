@@ -24,12 +24,15 @@ heat:
     metadata:
       host: 127.0.0.1
       port: 8000
+      protocol: http
     waitcondition:
       host: 127.0.0.1
       port: 8000
+      protocol: http
     watch:
       host: 127.0.0.1
       port: 8003
+      protocol: http
     identity:
       engine: keystone
       host: 127.0.0.1
