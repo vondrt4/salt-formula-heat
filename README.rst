@@ -131,6 +131,19 @@ Ceilometer notification
         version: icehouse
         notification: true
 
+Configuration of policy.json file
+
+.. code-block:: yaml
+
+    heat:
+      server:
+        ....
+        policy:
+          deny_stack_user: 'not role:heat_stack_user'
+          'cloudformation:ValidateTemplate': 'rule:deny_stack_user'
+          # Add key without value to remove line from policy.json
+          'cloudformation:DescribeStackResource':
+
 
 Client-side RabbitMQ HA setup
 

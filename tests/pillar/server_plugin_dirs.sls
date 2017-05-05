@@ -52,3 +52,7 @@ heat:
       plugins:
       - /test/dir1
       - /test/dir2
+    policy:
+      deny_stack_user: 'not role:heat_stack_user'
+      'cloudformation:ValidateTemplate': 'rule:deny_stack_user'
+      'cloudformation:DescribeStackResource':
