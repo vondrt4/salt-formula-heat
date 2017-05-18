@@ -14,6 +14,10 @@ provisioner:
   formula: heat
   grains:
     noservices: True
+  dependencies:
+    - name: keystone
+      repo: git
+      source: https://github.com/salt-formulas/salt-formula-keystone
   state_top:
     base:
       "*":

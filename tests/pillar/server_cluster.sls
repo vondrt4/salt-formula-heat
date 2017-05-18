@@ -54,3 +54,7 @@ heat:
       user: openstack
       password: password
       virtual_host: '/openstack'
+    policy:
+      deny_stack_user: 'not role:heat_stack_user'
+      'cloudformation:ValidateTemplate': 'rule:deny_stack_user'
+      'cloudformation:DescribeStackResource':

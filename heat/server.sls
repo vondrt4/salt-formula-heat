@@ -19,6 +19,30 @@ heat_server_packages:
   - require:
     - pkg: heat_server_packages
 
+{%- for name, rule in server.get('policy', {}).iteritems() %}
+
+{%- if rule != None %}
+rule_{{ name }}_present:
+  keystone_policy.rule_present:
+  - path: /etc/heat/policy.json
+  - name: {{ name }}
+  - rule: {{ rule }}
+  - require:
+    - pkg: heat_server_packages
+
+{%- else %}
+
+rule_{{ name }}_absent:
+  keystone_policy.rule_absent:
+  - path: /etc/heat/policy.json
+  - name: {{ name }}
+  - require:
+    - pkg: heat_server_packages
+
+{%- endif %}
+
+{%- endfor %}
+
 {%- if grains.get('virtual_subtype', None) == "Docker" %}
 
 heat_entrypoint:
