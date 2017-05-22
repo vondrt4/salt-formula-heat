@@ -23,7 +23,7 @@ region_name_for_services={{ server.region }}
 # List of directories to search for plug-ins. (list value)
 #plugin_dirs = /usr/lib64/heat,/usr/lib/heat,/usr/local/lib/heat,/usr/local/lib64/heat
 {%- if server.get('dir', {}).plugins is defined %}
-plugin_dirs={{ server.dir.plugins|join(",") }}
+plugin_dirs=/usr/lib64/heat,/usr/lib/heat,/usr/local/lib/heat,/usr/local/lib64/heat,{{ server.dir.plugins|join(",") }}
 {%- endif %}
 
 # The directory to search for environment files. (string value)
