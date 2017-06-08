@@ -95,11 +95,12 @@ heat_keystone_setup:
 
 {%- endif %}
 
-{%- if not grains.get('noservices', False) %}
-
 heat_syncdb:
   cmd.run:
   - name: heat-manage db_sync
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - require:
     - file: /etc/heat/heat.conf
     - pkg: heat_server_packages
@@ -107,6 +108,9 @@ heat_syncdb:
 heat_log_access:
   cmd.run:
   - name: chown heat:heat /var/log/heat/ -R
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - require:
     - file: /etc/heat/heat.conf
     - pkg: heat_server_packages
@@ -117,12 +121,13 @@ heat_server_services:
   service.running:
   - names: {{ server.services }}
   - enable: true
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - require:
     - cmd: heat_syncdb
   - watch:
     - file: /etc/heat/heat.conf
     - file: /etc/heat/api-paste.ini
-
-{%- endif %}
 
 {%- endif %}
