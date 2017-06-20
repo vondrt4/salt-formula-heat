@@ -1,0 +1,10 @@
+{%- from "heat/map.jinja" import server with context %}
+{%- if server.get('enabled', False) %}
+agent:
+  input:
+    http_response:
+      heat-api:
+        address: "http://{{ server.bind.api.address|replace('0.0.0.0', '127.0.0.1') }}:8004/"
+      heat-cfn-api:
+        address: "http://{{ server.bind.api_cfn.address|replace('0.0.0.0', '127.0.0.1') }}:8000/"
+{%- endif %}
