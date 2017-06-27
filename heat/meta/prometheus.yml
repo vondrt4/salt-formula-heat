@@ -1,0 +1,32 @@
+{%- if pillar.heat.server is defined %}
+
+{%- from "heat/map.jinja" import server with context %}
+{%- if server.get('enabled', False) %}
+{% raw %}
+server:
+  alert:
+    HeatAPIDown:
+      if: >-
+        max(openstack_api_check_status{service=~"heat.+"}) by (service) == 0
+      for: 2m
+      labels:
+        severity: down
+        service: "{{ $labels.service }}"
+      annotations:
+        summary: "Endpoint check for '{{ $labels.service }}' is down"
+        description: >-
+            Endpoint check for '{{ $labels.service }}' is down for 2 minutes
+    HeatErrorLogsTooHigh:
+{%- endraw %}
+      {%- set log_threshold = prometheus_server.get('alert', {}).get('HeatErrorLogsTooHigh', {}).get('var', {}).get('threshold', 0.2 ) %}
+      if: >-
+        sum(rate(log_messages{service="heat",level=~"error|emergency|fatal"}[5m])) without (level) > {{ log_threshold }}
+{%- raw %}
+      labels:
+        severity: warning
+        service: "{{ $labels.service }}"
+      annotations:
+        summary: 'Too many errors in {{ $labels.service }} logs'
+        description: 'The rate of errors in {{ $labels.service }} logs over the last 5 minutes is too high on node {{ $labels.host }} (current value={{ $value }}, threshold={%- endraw %}{{ log_threshold }}).'
+{%- endif %}
+{%- endif %}
