@@ -5,6 +5,8 @@ agent:
     http_response:
       heat-api:
         address: "http://{{ server.bind.api.address|replace('0.0.0.0', '127.0.0.1') }}:8004/"
+        expected_code: 300
       heat-cfn-api:
         address: "http://{{ server.bind.api_cfn.address|replace('0.0.0.0', '127.0.0.1') }}:8000/"
+        expected_code: 300
 {%- endif %}
