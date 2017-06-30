@@ -1,8 +1,14 @@
 dashboard:
-  heat:
+  heat_influxdb:
+    datasource: influxdb
     format: json
     template: heat/files/grafana_dashboards/heat_influxdb.json
+  heat_prometheus:
+    datasource: prometheus
+    format: json
+    template: heat/files/grafana_dashboards/heat_prometheus.json
   main:
+    datasource: influxdb
     row:
       ost-control-plane:
         title: OpenStack Control Plane
@@ -18,6 +24,7 @@ dashboard:
                 rawQuery: true
                 query: SELECT last(value) FROM cluster_status WHERE cluster_name = 'heat' AND environment_label = '$environment' AND $timeFilter GROUP BY time($interval) fill(null)
   service_level:
+    datasource: influxdb
     row:
       heat-service-level:
         title: Heat Service Levels
