@@ -405,7 +405,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Throuhgput",
+          "title": "Throughput",
           "tooltip": {
             "shared": true,
             "sort": 0,
