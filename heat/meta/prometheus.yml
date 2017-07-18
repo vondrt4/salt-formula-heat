@@ -1,6 +1,6 @@
 {%- if pillar.heat.server is defined %}
 
-{%- from "heat/map.jinja" import server with context %}
+{%- from "heat/map.jinja" import server, monitoring with context %}
 {%- if server.get('enabled', False) %}
 {% raw %}
 server:
@@ -18,7 +18,7 @@ server:
             Endpoint check for '{{ $labels.service }}' is down for 2 minutes
     HeatErrorLogsTooHigh:
 {%- endraw %}
-      {%- set log_threshold = prometheus_server.get('alert', {}).get('HeatErrorLogsTooHigh', {}).get('var', {}).get('threshold', 0.2 ) %}
+      {%- set log_threshold = monitoring.error_log_rate|float %}
       if: >-
         sum(rate(log_messages{service="heat",level=~"error|emergency|fatal"}[5m])) without (level) > {{ log_threshold }}
 {%- raw %}
