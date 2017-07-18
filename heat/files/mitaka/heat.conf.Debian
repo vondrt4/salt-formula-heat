@@ -749,7 +749,13 @@ endpoint_type = {{ server.identity.get('endpoint_type_default', 'publicURL') }}
 endpoint_type = {{ server.identity.get('endpoint_type_heat',
                                        server.identity.get('endpoint_type_default', 'publicURL')) }}
 [clients_keystone]
+{%- if server.clients.keystone is defined %}
+auth_uri= {{ server.clients.keystone.protocol }}://{{ server.clients.keystone.host }}:{{ server.clients.keystone.port }}
+insecure = {{ server.clients.keystone.get('insecure', false) }}
+{%- else %}
 auth_uri=http://{{ server.identity.host }}:35357
+{%- endif %}
+
 
 {%- if pillar.get('opencontrail', {}).get('client', {}).get('enabled', False) %}
 

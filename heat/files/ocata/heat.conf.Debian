@@ -860,9 +860,15 @@ max_template_size=5440000
 
 # If set, then the server's certificate will not be verified. (boolean value)
 #insecure = <None>
+{%- if server.clients.keystone is defined %}
+insecure = {{ server.clients.keystone.get('insecure', false) }}
+{%- endif %}
 
 # Unversioned keystone url in format like http://0.0.0.0:5000. (string value)
 #auth_uri =
+{%- if server.clients.keystone is defined %}
+auth_uri= {{ server.clients.keystone.protocol }}://{{ server.clients.keystone.host }}:{{ server.clients.keystone.port }}
+{%- endif %}
 
 
 [clients_magnum]
