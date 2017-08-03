@@ -67,6 +67,19 @@ Single Heat services on the controller node
           virtual_host: '/openstack'
           ha_queues: True
 
+Define server clients keystone parameter
+
+.. code-block:: yaml
+
+    heat:
+      server:
+        clients:
+          keystone:
+            protocol: https
+            host: 10.0.106.10
+            port: 5000
+            insecure: false
+
 Enable CORS parameters
 
 .. code-block:: yaml
