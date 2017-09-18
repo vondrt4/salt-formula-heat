@@ -117,7 +117,7 @@ Heat client with specified git templates
               revision: master
 
 
-Heat system definition of several stacks/systems 
+Heat system definition of several stacks/systems
 
 .. code-block:: yaml
 
@@ -175,6 +175,46 @@ Client-side RabbitMQ HA setup
           password: pwd
           virtual_host: '/openstack'
         ....
+
+Client-side RabbitMQ TLS configuration:
+
+|
+
+To enable TLS for oslo.messaging you need to provide the CA certificate.
+
+By default system-wide CA certs are used. Nothing should be specified except `ssl.enabled`.
+
+.. code-block:: yaml
+
+      ....
+      message_queue:
+        ssl:
+          enabled: True
+
+Use `cacert_file` param to specify the CA-cert file location explicitly:
+
+.. code-block:: yaml
+
+      ....
+      message_queue:
+        ssl:
+          enabled: True
+          cacert_file: /etc/ssl/rabbitmq-ca.pem
+
+To manage content of the `cacert_file` use the `cacert` param:
+
+.. code-block:: yaml
+
+      ....
+      message_queue:
+        ssl:
+          enabled: True
+          cacert: { file content here }
+          cacert_file: /etc/openstack/rabbitmq-ca.pem
+
+Notice:
+ * The `message_queue.port` is set to **5671** (AMQPS) by default if `ssl.enabled=True`.
+ * Use `message_queue.ssl.version` if you need to specify protocol version. By default is TLSv1 for python < 2.7.9 and TLSv1_2 for version above.
 
 
 Documentation and Bugs

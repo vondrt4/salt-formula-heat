@@ -1,4 +1,4 @@
-{%- from "heat/map.jinja" import server with context %}
+{%- from "heat/map.jinja" import server, system_cacerts_file with context %}
 {%- if server.enabled %}
 
 heat_server_packages:
@@ -129,5 +129,22 @@ heat_server_services:
   - watch:
     - file: /etc/heat/heat.conf
     - file: /etc/heat/api-paste.ini
+    {%- if server.message_queue.get('ssl',{}).get('enabled', False) %}
+    - file: rabbitmq_ca
+    {%- endif %}
+
+{%- if server.message_queue.get('ssl',{}).get('enabled', False) %}
+rabbitmq_ca:
+{%- if server.message_queue.ssl.cacert is defined %}
+  file.managed:
+    - name: {{ server.message_queue.ssl.cacert_file }}
+    - contents_pillar: heat:server:message_queue:ssl:cacert
+    - mode: 0444
+    - makedirs: true
+{%- else %}
+  file.exists:
+   - name: {{ server.message_queue.ssl.get('cacert_file', system_cacerts_file) }}
+{%- endif %}
+{%- endif %}
 
 {%- endif %}
