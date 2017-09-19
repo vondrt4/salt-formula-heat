@@ -132,6 +132,9 @@ heat_server_services:
     {%- if server.message_queue.get('ssl',{}).get('enabled', False) %}
     - file: rabbitmq_ca
     {%- endif %}
+    {%- if server.database.get('ssl',{}).get('enabled', False) %}
+    - file: mysql_ca_heat_server
+    {%- endif %}
 
 {%- if server.message_queue.get('ssl',{}).get('enabled', False) %}
 rabbitmq_ca:
@@ -145,6 +148,22 @@ rabbitmq_ca:
   file.exists:
    - name: {{ server.message_queue.ssl.get('cacert_file', system_cacerts_file) }}
 {%- endif %}
+{%- endif %}
+
+{%- if server.database.get('ssl',{}).get('enabled', False) %}
+mysql_ca_heat_server:
+{%- if server.database.ssl.cacert is defined %}
+  file.managed:
+    - name: {{ server.database.ssl.cacert_file }}
+    - contents_pillar: heat:server:database:ssl:cacert
+    - mode: 0444
+    - makedirs: true
+{%- else %}
+  file.exists:
+   - name: {{ server.database.ssl.get('cacert_file', system_cacerts_file) }}
+{%- endif %}
+   - require_in:
+     - file: /etc/heat/heat.conf
 {%- endif %}
 
 {%- endif %}
