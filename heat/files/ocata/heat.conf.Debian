@@ -57,6 +57,9 @@ plugin_dirs=/usr/lib64/heat,/usr/lib/heat,/usr/local/lib/heat,/usr/local/lib64/h
 # Maximum number of stacks any one tenant may have active at one time. (integer
 # value)
 #max_stacks_per_tenant = 100
+{%- if server.max_stacks_per_tenant is defined %}
+max_stacks_per_tenant = {{ server.max_stacks_per_tenant }}
+{%- endif %}
 
 # Number of times to retry to bring a resource to a non-error state. Set to 0
 # to disable retries. (integer value)

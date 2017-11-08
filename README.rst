@@ -66,6 +66,7 @@ Single Heat services on the controller node
           password: password
           virtual_host: '/openstack'
           ha_queues: True
+        max_stacks_per_tenant: 150
 
 Define server clients keystone parameter
 

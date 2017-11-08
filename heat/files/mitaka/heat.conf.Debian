@@ -206,6 +206,9 @@ rpc_backend = rabbit
 max_resources_per_stack=20000
 max_json_body_size=10880000
 max_template_size=5440000
+{%- if server.max_stacks_per_tenant is defined %}
+max_stacks_per_tenant = {{ server.max_stacks_per_tenant }}
+{%- endif %}
 
 [heat_api]
 

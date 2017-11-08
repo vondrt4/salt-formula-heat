@@ -58,3 +58,4 @@ heat:
       deny_stack_user: 'not role:heat_stack_user'
       'cloudformation:ValidateTemplate': 'rule:deny_stack_user'
       'cloudformation:DescribeStackResource':
+    max_stacks_per_tenant: 150
