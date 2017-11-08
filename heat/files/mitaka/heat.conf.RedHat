@@ -197,6 +197,9 @@ rpc_backend = rabbit
 {%- if server.max_stacks_per_tenant is defined %}
 max_stacks_per_tenant = {{ server.max_stacks_per_tenant }}
 {%- endif %}
+{%- if server.max_nested_stack_depth is defined %}
+max_nested_stack_depth = {{ server.max_nested_stack_depth }}
+{%- endif %}
 
 [heat_api]
 

@@ -67,6 +67,7 @@ Single Heat services on the controller node
           virtual_host: '/openstack'
           ha_queues: True
         max_stacks_per_tenant: 150
+        max_nested_stack_depth: 10
 
 Define server clients keystone parameter
 

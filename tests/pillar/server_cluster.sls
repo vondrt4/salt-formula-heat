@@ -59,3 +59,4 @@ heat:
       'cloudformation:ValidateTemplate': 'rule:deny_stack_user'
       'cloudformation:DescribeStackResource':
     max_stacks_per_tenant: 150
+    max_nested_stack_depth: 10

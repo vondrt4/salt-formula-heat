@@ -57,6 +57,9 @@ trusts_delegated_roles=heat_stack_owner
 {%- if server.max_stacks_per_tenant is defined %}
 max_stacks_per_tenant = {{ server.max_stacks_per_tenant }}
 {%- endif %}
+{%- if server.max_nested_stack_depth is defined %}
+max_nested_stack_depth = {{ server.max_nested_stack_depth }}
+{%- endif %}
 
 # Number of times to retry to bring a resource to a non-error
 # state. Set to 0 to disable retries. (integer value)
