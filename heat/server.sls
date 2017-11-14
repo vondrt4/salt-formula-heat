@@ -130,14 +130,14 @@ heat_server_services:
     - file: /etc/heat/heat.conf
     - file: /etc/heat/api-paste.ini
     {%- if server.message_queue.get('ssl',{}).get('enabled', False) %}
-    - file: rabbitmq_ca
+    - file: rabbitmq_ca_heat_server
     {%- endif %}
     {%- if server.database.get('ssl',{}).get('enabled', False) %}
     - file: mysql_ca_heat_server
     {%- endif %}
 
 {%- if server.message_queue.get('ssl',{}).get('enabled', False) %}
-rabbitmq_ca:
+rabbitmq_ca_heat_server:
 {%- if server.message_queue.ssl.cacert is defined %}
   file.managed:
     - name: {{ server.message_queue.ssl.cacert_file }}
