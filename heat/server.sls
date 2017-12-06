@@ -19,6 +19,78 @@ heat_server_packages:
   - require:
     - pkg: heat_server_packages
 
+{%- for service_name in server.services %}
+{{ service_name }}_default:
+  file.managed:
+    - name: /etc/default/{{ service_name }}
+    - source: salt://heat/files/default
+    - template: jinja
+    - defaults:
+        service_name: {{ service_name }}
+        values: {{ server }}
+    - require:
+      - pkg: heat_server_packages
+    - watch_in:
+      - service: heat_server_services
+{%- endfor %}
+
+
+{%- if server.logging.log_appender %}
+
+{%- if server.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
+heat_fluentd_logger_package:
+  pkg.installed:
+    - name: python-fluent-logger
+{%- endif %}
+
+heat_general_logging_conf:
+  file.managed:
+    - name: /etc/heat/logging.conf
+    - source: salt://heat/files/logging.conf
+    - template: jinja
+    - user: heat
+    - group: heat
+    - defaults:
+        service_name: heat
+        values: {{ server }}
+    - require:
+      - pkg: heat_server_packages
+{%- if server.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
+      - pkg: heat_fluentd_logger_package
+{%- endif %}
+    - watch_in:
+      - service: heat_server_services
+
+/var/log/heat/heat.log:
+  file.managed:
+    - user: heat
+    - group: heat
+    - watch_in:
+      - service: heat_server_services
+
+{% for service_name in server.get('services', []) %}
+{{ service_name }}_logging_conf:
+  file.managed:
+    - name: /etc/heat/logging/logging-{{ service_name }}.conf
+    - source: salt://heat/files/logging.conf
+    - template: jinja
+    - makedirs: True
+    - user: heat
+    - group: heat
+    - defaults:
+        service_name: {{ service_name }}
+        values: {{ server }}
+    - require:
+      - pkg: heat_server_packages
+{%- if server.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
+      - pkg: heat_fluentd_logger_package
+{%- endif %}
+    - watch_in:
+      - service: heat_server_services
+{% endfor %}
+
+{% endif %}
+
 {%- for name, rule in server.get('policy', {}).iteritems() %}
 
 {%- if rule != None %}
