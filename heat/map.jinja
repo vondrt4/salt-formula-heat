@@ -1,9 +1,12 @@
-{%- set system_cacerts_file = salt['grains.filter_by']({
-    'Debian': '/etc/ssl/certs/ca-certificates.crt',
-    'RedHat': '/etc/pki/tls/certs/ca-bundle.crt'
-})%}
+{%- set default_params = {
+    'cacert_file': salt['grains.filter_by']({
+        'Debian': '/etc/ssl/certs/ca-certificates.crt',
+        'RedHat': '/etc/pki/tls/certs/ca-bundle.crt'
+    })}
+%}
 
 {% set server = salt['grains.filter_by']({
+    'BaseDefaults': default_params,
     'Debian': {
         'pkgs': ['heat-api', 'heat-api-cfn', 'heat-api-cloudwatch', 'heat-engine', 'heat-common','python-heatclient', 'gettext-base'],
         'services': ['heat-api', 'heat-api-cfn', 'heat-api-cloudwatch', 'heat-engine'],
@@ -18,7 +21,7 @@
         'cors': {},
         'clients': {}
     },
-}, merge=pillar.heat.get('server', {})) %}
+}, merge=pillar.heat.get('server', {}), base='BaseDefaults') %}
 
 {% set client = salt['grains.filter_by']({
     'Debian': {

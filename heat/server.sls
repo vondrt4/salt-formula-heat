@@ -1,4 +1,4 @@
-{%- from "heat/map.jinja" import server, system_cacerts_file with context %}
+{%- from "heat/map.jinja" import server with context %}
 {%- if server.enabled %}
 
 heat_server_packages:
@@ -146,7 +146,7 @@ rabbitmq_ca_heat_server:
     - makedirs: true
 {%- else %}
   file.exists:
-   - name: {{ server.message_queue.ssl.get('cacert_file', system_cacerts_file) }}
+   - name: {{ server.message_queue.ssl.get('cacert_file', server.cacert_file) }}
 {%- endif %}
 {%- endif %}
 
@@ -160,7 +160,7 @@ mysql_ca_heat_server:
     - makedirs: true
 {%- else %}
   file.exists:
-   - name: {{ server.database.ssl.get('cacert_file', system_cacerts_file) }}
+   - name: {{ server.database.ssl.get('cacert_file', server.cacert_file) }}
 {%- endif %}
    - require_in:
      - file: /etc/heat/heat.conf

@@ -1,4 +1,4 @@
-{%- from "heat/map.jinja" import server, system_cacerts_file with context %}
+{%- from "heat/map.jinja" import server with context %}
 [DEFAULT]
 
 #
@@ -337,7 +337,7 @@ bind_host={{ server.bind.api_cloudwatch.address }}
 # Deprecated group/name - [DATABASE]/sql_connection
 # Deprecated group/name - [sql]/connection
 #connection = <None>
-connection = {{ server.database.engine }}://{{ server.database.user }}:{{ server.database.password }}@{{ server.database.host }}/{{ server.database.name }}?{%- if server.database.get('ssl',{}).get('enabled',False) %}&ssl_ca={{ server.database.ssl.get('cacert_file', system_cacerts_file) }}{% endif %}
+connection = {{ server.database.engine }}://{{ server.database.user }}:{{ server.database.password }}@{{ server.database.host }}/{{ server.database.name }}?{%- if server.database.get('ssl',{}).get('enabled',False) %}&ssl_ca={{ server.database.ssl.get('cacert_file', server.cacert_file) }}{% endif %}
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)
