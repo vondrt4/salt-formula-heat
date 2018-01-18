@@ -218,6 +218,31 @@ Notice:
  * The `message_queue.port` is set to **5671** (AMQPS) by default if `ssl.enabled=True`.
  * Use `message_queue.ssl.version` if you need to specify protocol version. By default is TLSv1 for python < 2.7.9 and TLSv1_2 for version above.
 
+Enhanced logging with logging.conf
+----------------------------------
+
+By default logging.conf is disabled.
+
+That is possible to enable per-binary logging.conf with new variables:
+  * openstack_log_appender - set it to true to enable log_config_append for all OpenStack services;
+  * openstack_fluentd_handler_enabled - set to true to enable FluentHandler for all Openstack services.
+
+Only WatchedFileHandler and FluentHandler are available.
+
+Also it is possible to configure this with pillar:
+
+.. code-block:: yaml
+
+  heat:
+    server:
+      logging:
+        log_appender: true
+        log_handlers:
+          watchedfile:
+            enabled: true
+          fluentd:
+            enabled: true
+
 
 Documentation and Bugs
 ======================

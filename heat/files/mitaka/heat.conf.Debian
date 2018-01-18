@@ -21,6 +21,9 @@ verbose = true
 # files, see the Python logging module documentation. (string value)
 # Deprecated group/name - [DEFAULT]/log_config
 #log_config_append = <None>
+{%- if pillar.get('fluentd', {}).get('agent', {}).get('enabled', False) %}
+log_config_append=/etc/heat/logging.conf
+{%- endif %}
 
 # DEPRECATED. A logging.Formatter log message format string which may use any
 # of the available logging.LogRecord attributes. This option is deprecated.
