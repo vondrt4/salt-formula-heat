@@ -119,23 +119,6 @@ Heat client with specified git templates
               revision: master
 
 
-Heat system definition of several stacks/systems
-
-.. code-block:: yaml
-
-    heat:
-      control:
-        enabled: true
-        system:
-          web_production:
-            format: hot
-            template_file: /srv/heat/template/web_cluster.hot
-            environment: /srv/heat/env/web_cluster/prd.env
-          web_staging:
-            format: hot
-            template_file: /srv/heat/template/web_cluster.hot
-            environment: /srv/heat/env/web_cluster/stg.env
-
 Ceilometer notification
 
 .. code-block:: yaml
