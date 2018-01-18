@@ -848,38 +848,6 @@ max_template_size=5440000
 #url =
 
 
-[clients_keystone]
-
-#
-# From heat.common.config
-#
-
-# Type of endpoint in Identity service catalog to use for communication with
-# the OpenStack service. (string value)
-#endpoint_type = <None>
-
-# Optional CA cert file to use in SSL connections. (string value)
-#ca_file = <None>
-
-# Optional PEM-formatted certificate chain file. (string value)
-#cert_file = <None>
-
-# Optional PEM-formatted file that contains the private key. (string value)
-#key_file = <None>
-
-# If set, then the server's certificate will not be verified. (boolean value)
-#insecure = <None>
-{%- if server.clients.keystone is defined %}
-insecure = {{ server.clients.keystone.get('insecure', false) }}
-{%- endif %}
-
-# Unversioned keystone url in format like http://0.0.0.0:5000. (string value)
-#auth_uri =
-{%- if server.clients.keystone is defined %}
-auth_uri= {{ server.clients.keystone.protocol }}://{{ server.clients.keystone.host }}:{{ server.clients.keystone.port }}
-{%- endif %}
-
-
 [clients_magnum]
 
 #
@@ -1345,11 +1313,21 @@ keystone_ec2_uri=http://{{ server.identity.host }}:5000/v2.0/ec2tokens
 
 [clients]
 endpoint_type = {{ server.identity.get('endpoint_type_default', 'publicURL') }}
+{%- if server.clients is defined %}
+{%- if server.clients.insecure is defined %}
+insecure = {{ server.clients.insecure }}
+{%- endif %}
+{%- endif %}
 
 [clients_heat]
 endpoint_type = {{ server.identity.get('endpoint_type_heat',
                                        server.identity.get('endpoint_type_default', 'publicURL')) }}
 [clients_keystone]
+{%- if server.clients is defined %}
+{%- if server.clients.keystone is defined %}
+insecure = {{ server.clients.keystone.get('insecure', false) }}
+{%- endif %}
+{%- endif %}
 auth_uri=http://{{ server.identity.host }}:35357
 
 {%- if pillar.get('opencontrail', {}).get('client', {}).get('enabled', False) %}
