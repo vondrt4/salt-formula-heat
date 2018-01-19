@@ -1299,7 +1299,7 @@ max_overflow = 60
 #
 
 # Authentication Endpoint URI. (string value)
-auth_uri=http://{{ server.identity.host }}:5000/v2.0
+auth_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:5000/v2.0
 
 # Allow orchestration of multiple clouds. (boolean value)
 #multi_cloud=false
@@ -1308,14 +1308,19 @@ auth_uri=http://{{ server.identity.host }}:5000/v2.0
 # enabled. At least one endpoint needs to be specified. (list
 # value)
 #allowed_auth_uris=
-
-keystone_ec2_uri=http://{{ server.identity.host }}:5000/v2.0/ec2tokens
+{%- if server.identity.get('protocol', 'http') == 'https' %}
+ca_file = {{ server.identity.get('cacert_file', server.cacert_file) }}
+{%- endif %}
+keystone_ec2_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:5000/v2.0/ec2tokens
 
 [clients]
 endpoint_type = {{ server.identity.get('endpoint_type_default', 'publicURL') }}
 {%- if server.clients is defined %}
 {%- if server.clients.insecure is defined %}
 insecure = {{ server.clients.insecure }}
+{%- endif %}
+{%- if server.clients.get('protocol', 'http') == 'https' %}
+ca_file={{ server.identity.get('cacert_file', server.cacert_file) }}
 {%- endif %}
 {%- endif %}
 
@@ -1328,7 +1333,10 @@ endpoint_type = {{ server.identity.get('endpoint_type_heat',
 insecure = {{ server.clients.keystone.get('insecure', false) }}
 {%- endif %}
 {%- endif %}
-auth_uri=http://{{ server.identity.host }}:35357
+auth_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:35357
+{%- if server.identity.get('protocol', 'http') == 'https' %}
+ca_file={{ server.identity.get('cacert_file', server.cacert_file) }}
+{%- endif %}
 
 {%- if pillar.get('opencontrail', {}).get('client', {}).get('enabled', False) %}
 
@@ -1739,12 +1747,15 @@ bind_host = {{ server.bind.api_cloudwatch.address }}
 # Config Section from which to load plugin specific options (string value)
 #auth_section = <None>
 auth_type = password
-auth_uri=http://{{ server.identity.host }}:5000/v2.0
+auth_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:5000/v2.0
+{%- if server.identity.get('protocol', 'http') == 'https' %}
+cafile={{ server.identity.get('cacert_file', server.cacert_file) }}
+{%- endif %}
 #identity_uri=http://{{ server.identity.host }}:35357
 #admin_user={{ server.identity.user }}
 #admin_password={{ server.identity.password }}
 #admin_tenant_name={{ server.identity.tenant }}
-auth_url=http://{{ server.identity.host }}:35357
+auth_url={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:35357
 username = {{ server.identity.user }}
 password = {{ server.identity.password }}
 project_name = {{ server.identity.tenant }}
@@ -2717,7 +2728,7 @@ enable_proxy_headers_parsing = True
 # From heat.common.context
 #
 auth_plugin = password
-auth_url = http://{{ server.identity.host }}:35357
+auth_url = {{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:35357
 username = {{ server.identity.user }}
 password = {{ server.identity.password }}
 user_domain_name = default
