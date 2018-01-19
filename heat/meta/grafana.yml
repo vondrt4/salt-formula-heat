@@ -3,10 +3,17 @@ dashboard:
     datasource: influxdb
     format: json
     template: heat/files/grafana_dashboards/heat_influxdb.json
+{%- if pillar.get('fluentd', {}).get('agent', {}).get('enabled', False) %}
+  heat_prometheus:
+    datasource: prometheus
+    format: json
+    template: heat/files/grafana_dashboards/heat_prometheus_fluentd.json
+{%- else %}
   heat_prometheus:
     datasource: prometheus
     format: json
     template: heat/files/grafana_dashboards/heat_prometheus.json
+{%- endif %}
   main_influxdb:
     datasource: influxdb
     row:
