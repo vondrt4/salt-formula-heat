@@ -17,6 +17,12 @@ install:
   - bundle install
 
 env:
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=server-cluster
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=server-cluster
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=server-plugin-dirs
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=server-plugin-dirs
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=server-single
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=server-single
     - PLATFORM=trevorj/salty-whales:trusty SUITE=server-cluster
     - PLATFORM=trevorj/salty-whales:xenial SUITE=server-cluster
     - PLATFORM=trevorj/salty-whales:trusty SUITE=server-plugin-dirs
