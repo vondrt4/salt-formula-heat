@@ -134,23 +134,6 @@ keystonercv3:
 {%- endif %}
 
 {%- if not grains.get('virtual_subtype', None) == "Docker" %}
-
-{%- if not salt['pillar.get']('linux:system:repo:mirantis_openstack', False) %}
-
-heat_client_roles:
-  keystone.role_present:
-  - names:
-    - heat_stack_owner
-    - heat_stack_user
-  - connection_user: {{ server.identity.user }}
-  - connection_password: {{ server.identity.password }}
-  - connection_tenant: {{ server.identity.tenant }}
-  - connection_auth_url: 'http://{{ server.identity.host }}:{{ server.identity.port }}/v2.0/'
-  - require:
-    - pkg: heat_server_packages
-
-{%- endif %}
-
 {%- if server.version != 'juno' %}
 
 heat_keystone_setup:
