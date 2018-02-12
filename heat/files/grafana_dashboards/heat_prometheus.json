@@ -510,7 +510,9 @@
   ],
   "schemaVersion": 14,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "openstack"
+  ],
   "templating": {
     "list": [
       {
