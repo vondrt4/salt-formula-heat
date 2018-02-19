@@ -17,18 +17,15 @@ install:
   - bundle install
 
 env:
-    - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=server-cluster
-    - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=server-cluster
-    - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=server-plugin-dirs
-    - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=server-plugin-dirs
-    - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=server-single
-    - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=server-single
-    - PLATFORM=trevorj/salty-whales:trusty SUITE=server-cluster
-    - PLATFORM=trevorj/salty-whales:xenial SUITE=server-cluster
-    - PLATFORM=trevorj/salty-whales:trusty SUITE=server-plugin-dirs
-    - PLATFORM=trevorj/salty-whales:xenial SUITE=server-plugin-dirs
-    - PLATFORM=trevorj/salty-whales:trusty SUITE=server-single
-    - PLATFORM=trevorj/salty-whales:xenial SUITE=server-single
+    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=server-cluster
+    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=server-plugin-dirs
+    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=server-single
+    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=server-cluster
+    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=server-plugin-dirs
+    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=server-single
+#    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=server-cluster
+#    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=server-plugin-dirs
+#    - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=server-single
 
 
 before_script:
