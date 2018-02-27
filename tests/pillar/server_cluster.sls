@@ -45,6 +45,15 @@ heat:
       admin_password: admin
       endpoint_type_default: internalURL
       endpoint_type_heat: publicURL
+    logging:
+      log_appender: false
+      log_handlers:
+        watchedfile:
+          enabled: true
+        fluentd:
+          enabled: false
+        ossyslog:
+          enabled: false
     message_queue:
       engine: rabbitmq
       members:
