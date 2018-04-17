@@ -1299,7 +1299,7 @@ max_overflow = 60
 #
 
 # Authentication Endpoint URI. (string value)
-auth_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:5000/v2.0
+auth_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:5000
 
 # Allow orchestration of multiple clouds. (boolean value)
 #multi_cloud=false
@@ -1311,7 +1311,7 @@ auth_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host
 {%- if server.identity.get('protocol', 'http') == 'https' %}
 ca_file = {{ server.identity.get('cacert_file', server.cacert_file) }}
 {%- endif %}
-keystone_ec2_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:5000/v2.0/ec2tokens
+keystone_ec2_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:5000/v3/ec2tokens
 
 [clients]
 endpoint_type = {{ server.identity.get('endpoint_type_default', 'publicURL') }}
@@ -1747,7 +1747,7 @@ bind_host = {{ server.bind.api_cloudwatch.address }}
 # Config Section from which to load plugin specific options (string value)
 #auth_section = <None>
 auth_type = password
-auth_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:5000/v2.0
+auth_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:5000
 {%- if server.identity.get('protocol', 'http') == 'https' %}
 cafile={{ server.identity.get('cacert_file', server.cacert_file) }}
 {%- endif %}
