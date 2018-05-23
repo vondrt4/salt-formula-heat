@@ -1,0 +1,1330 @@
+{%- from "heat/map.jinja" import server with context %}
+
+[DEFAULT]
+
+{%- set _data = server.message_queue %}
+{%- include "oslo_templates/files/queens/oslo/messaging/_default.conf" %}
+
+#
+# From heat.common.config
+#
+
+# Name of the engine node. This can be an opaque identifier. It is not
+# necessarily a hostname, FQDN, or IP address. (string value)
+#host = <Hostname>
+
+# List of directories to search for plug-ins. (list value)
+#plugin_dirs = /usr/lib64/heat,/usr/lib/heat,/usr/local/lib/heat,/usr/local/lib64/heat
+{%- if server.get('dir', {}).plugins is defined %}
+plugin_dirs=/usr/lib64/heat,/usr/lib/heat,/usr/local/lib/heat,/usr/local/lib64/heat,{{ server.dir.plugins|join(",") }}
+{%- endif %}
+
+# The directory to search for environment files. (string value)
+#environment_dir = /etc/heat/environment.d
+
+# The directory to search for template files. (string value)
+#template_dir = /etc/heat/templates
+
+# DEPRECATED: Select deferred auth method, stored password or trusts. (string
+# value)
+# Possible values:
+# password - <No description provided>
+# trusts - <No description provided>
+# This option is deprecated for removal since 9.0.0.
+# Its value may be silently ignored in the future.
+# Reason: Stored password based deferred auth is broken when used with keystone
+# v3 and is not supported.
+#deferred_auth_method = trusts
+
+# Allow reauthentication on token expiry, such that long-running tasks may
+# complete. Note this defeats the expiry of any provided user tokens. (string
+# value)
+# Possible values:
+# '' - <No description provided>
+# trusts - <No description provided>
+#reauthentication_auth_method =
+
+# Subset of trustor roles to be delegated to heat. If left unset, all roles of
+# a user will be delegated to heat when creating a stack. (list value)
+#trusts_delegated_roles =
+
+# Maximum resources allowed per top-level stack. -1 stands for unlimited.
+# (integer value)
+max_resources_per_stack = {{ server.get('max_resources_per_stack', 20000) }}
+
+# Maximum number of stacks any one tenant may have active at one time. (integer
+# value)
+#max_stacks_per_tenant = 100
+{%- if server.max_stacks_per_tenant is defined %}
+max_stacks_per_tenant = {{ server.max_stacks_per_tenant }}
+{%- endif %}
+
+# Number of times to retry to bring a resource to a non-error state. Set to 0
+# to disable retries. (integer value)
+#action_retry_limit = 5
+
+# Number of times to retry when a client encounters an expected intermittent
+# error. Set to 0 to disable retries. (integer value)
+#client_retry_limit = 2
+
+# Maximum length of a server name to be used in nova. (integer value)
+# Maximum value: 53
+#max_server_name_length = 53
+
+# Number of times to check whether an interface has been attached or detached.
+# (integer value)
+# Minimum value: 1
+#max_interface_check_attempts = 10
+
+# Controls how many events will be pruned whenever a stack's events are purged.
+# Set this lower to keep more events at the expense of more frequent purges.
+# (integer value)
+# Minimum value: 1
+#event_purge_batch_size = 200
+
+# Rough number of maximum events that will be available per stack. Actual
+# number of events can be a bit higher since purge checks take place randomly
+# 200/event_purge_batch_size percent of the time. Older events are deleted when
+# events are purged. Set to 0 for unlimited events per stack. (integer value)
+#max_events_per_stack = 1000
+
+# Timeout in seconds for stack action (ie. create or update). (integer value)
+#stack_action_timeout = 3600
+
+# The amount of time in seconds after an error has occurred that tasks may
+# continue to run before being cancelled. (integer value)
+#error_wait_time = 240
+
+# RPC timeout for the engine liveness check that is used for stack locking.
+# (integer value)
+#engine_life_check_timeout = 2
+
+# DEPRECATED: Enable the legacy OS::Heat::CWLiteAlarm resource. (boolean value)
+# This option is deprecated for removal since 10.0.0.
+# Its value may be silently ignored in the future.
+# Reason: Heat CloudWatch Service has been removed.
+#enable_cloud_watch_lite = false
+
+# Enable the preview Stack Abandon feature. (boolean value)
+#enable_stack_abandon = false
+
+# Enable the preview Stack Adopt feature. (boolean value)
+#enable_stack_adopt = false
+
+# Enables engine with convergence architecture. All stacks with this option
+# will be created using convergence engine. (boolean value)
+#convergence_engine = true
+
+# On update, enables heat to collect existing resource properties from reality
+# and converge to updated template. (boolean value)
+#observe_on_update = false
+
+# Template default for how the server should receive the metadata required for
+# software configuration. POLL_SERVER_CFN will allow calls to the cfn API
+# action DescribeStackResource authenticated with the provided keypair
+# (requires enabled heat-api-cfn). POLL_SERVER_HEAT will allow calls to the
+# Heat API resource-show using the provided keystone credentials (requires
+# keystone v3 API, and configured stack_user_* config options). POLL_TEMP_URL
+# will create and populate a Swift TempURL with metadata for polling (requires
+# object-store endpoint which supports TempURL).ZAQAR_MESSAGE will create a
+# dedicated zaqar queue and post the metadata for polling. (string value)
+# Possible values:
+# POLL_SERVER_CFN - <No description provided>
+# POLL_SERVER_HEAT - <No description provided>
+# POLL_TEMP_URL - <No description provided>
+# ZAQAR_MESSAGE - <No description provided>
+#default_software_config_transport = POLL_SERVER_CFN
+
+# Template default for how the server should signal to heat with the deployment
+# output values. CFN_SIGNAL will allow an HTTP POST to a CFN keypair signed URL
+# (requires enabled heat-api-cfn). TEMP_URL_SIGNAL will create a Swift TempURL
+# to be signaled via HTTP PUT (requires object-store endpoint which supports
+# TempURL). HEAT_SIGNAL will allow calls to the Heat API resource-signal using
+# the provided keystone credentials. ZAQAR_SIGNAL will create a dedicated zaqar
+# queue to be signaled using the provided keystone credentials. (string value)
+# Possible values:
+# CFN_SIGNAL - <No description provided>
+# TEMP_URL_SIGNAL - <No description provided>
+# HEAT_SIGNAL - <No description provided>
+# ZAQAR_SIGNAL - <No description provided>
+#default_deployment_signal_transport = CFN_SIGNAL
+
+# Template default for how the user_data should be formatted for the server.
+# For HEAT_CFNTOOLS, the user_data is bundled as part of the heat-cfntools
+# cloud-init boot configuration data. For RAW the user_data is passed to Nova
+# unmodified. For SOFTWARE_CONFIG user_data is bundled as part of the software
+# config data, and metadata is derived from any associated SoftwareDeployment
+# resources. (string value)
+# Possible values:
+# HEAT_CFNTOOLS - <No description provided>
+# RAW - <No description provided>
+# SOFTWARE_CONFIG - <No description provided>
+#default_user_data_format = HEAT_CFNTOOLS
+
+# Stacks containing these tag names will be hidden. Multiple tags should be
+# given in a comma-delimited list (eg. hidden_stack_tags=hide_me,me_too). (list
+# value)
+#hidden_stack_tags = data-processing-cluster
+
+# Deprecated. (string value)
+#onready = <None>
+
+# When this feature is enabled, scheduler hints identifying the heat stack
+# context of a server or volume resource are passed to the configured
+# schedulers in nova and cinder, for creates done using heat resource types
+# OS::Cinder::Volume, OS::Nova::Server, and AWS::EC2::Instance.
+# heat_root_stack_id will be set to the id of the root stack of the resource,
+# heat_stack_id will be set to the id of the resource's parent stack,
+# heat_stack_name will be set to the name of the resource's parent stack,
+# heat_path_in_stack will be set to a list of comma delimited strings of
+# stackresourcename and stackname with list[0] being 'rootstackname',
+# heat_resource_name will be set to the resource's name, and heat_resource_uuid
+# will be set to the resource's orchestration id. (boolean value)
+#stack_scheduler_hints = false
+
+# Encrypt template parameters that were marked as hidden and also all the
+# resource properties before storing them in database. (boolean value)
+#encrypt_parameters_and_properties = false
+
+# Seconds between running periodic tasks. (integer value)
+#periodic_interval = 60
+
+# URL of the Heat metadata server. NOTE: Setting this is only needed if you
+# require instances to use a different endpoint than in the keystone catalog
+# (string value)
+#heat_metadata_server_url = <None>
+heat_metadata_server_url = {{ server.metadata.protocol }}://{{ server.metadata.host }}:{{ server.metadata.port }}
+
+# URL of the Heat waitcondition server. (string value)
+#heat_waitcondition_server_url = <None>
+heat_waitcondition_server_url = {{ server.waitcondition.protocol }}://{{ server.waitcondition.host }}:{{ server.waitcondition.port }}/v1/waitcondition
+
+# DEPRECATED: URL of the Heat CloudWatch server. (string value)
+# This option is deprecated for removal since 10.0.0.
+# Its value may be silently ignored in the future.
+# Reason: Heat CloudWatch Service has been removed.
+#heat_watch_server_url = {{ server.watch.protocol }}://{{ server.watch.host }}:{{ server.watch.port }}
+
+# Instance connection to CFN/CW API via https. (string value)
+instance_connection_is_secure = 0
+
+# Instance connection to CFN/CW API validate certs if SSL is used. (string
+# value)
+#instance_connection_https_validate_certificates = 1
+
+# Default region name used to get services endpoints. (string value)
+#region_name_for_services = <None>
+region_name_for_services = {{ server.region }}
+
+# Keystone role for heat template-defined users. (string value)
+#heat_stack_user_role = heat_stack_user
+
+# Keystone domain ID which contains heat template-defined users. If this option
+# is set, stack_user_domain_name option will be ignored. (string value)
+# Deprecated group/name - [DEFAULT]/stack_user_domain
+#stack_user_domain_id = <None>
+
+{%- if server.stack_domain_admin is defined %}
+
+# Keystone domain name which contains heat template-defined users. If
+# `stack_user_domain_id` option is set, this option is ignored. (string value)
+stack_user_domain_name = {{ server.stack_domain_admin.get('stack_user_domain_name', 'heat_user_domain') }}
+
+# Keystone username, a user with roles sufficient to manage users and projects
+# in the stack_user_domain. (string value)
+#stack_domain_admin = <None>
+stack_domain_admin = heat_domain_admin
+
+# Keystone password for stack_domain_admin user. (string value)
+#stack_domain_admin_password = <None>
+stack_domain_admin_password = {{ server.stack_domain_admin.password }}
+
+{%- else %}
+
+# Keystone domain name which contains heat template-defined users. If
+# `stack_user_domain_id` option is set, this option is ignored. (string value)
+# stack_user_domain_name = <None>
+
+# Keystone username, a user with roles sufficient to manage users and projects
+# in the stack_user_domain. (string value)
+#stack_domain_admin = <None>
+
+# Keystone password for stack_domain_admin user. (string value)
+#stack_domain_admin_password = <None>
+
+{%- endif %}
+
+# Maximum raw byte size of any template. (integer value)
+max_template_size = {{ server.get('max_template_size', 5440000) }} 
+
+# Maximum depth allowed when using nested stacks. (integer value)
+#max_nested_stack_depth = 5
+{%- if server.max_nested_stack_depth is defined %}
+max_nested_stack_depth = {{ server.max_nested_stack_depth }}
+{%- endif %}
+
+# Number of heat-engine processes to fork and run. Will default to either to 4
+# or number of CPUs on the host, whichever is greater. (integer value)
+#num_engine_workers = <None>
+
+#
+# From heat.common.crypt
+#
+
+# Key used to encrypt authentication info in the database. Length of this key
+# must be 32 characters. (string value)
+#auth_encryption_key = notgood but just long enough i t
+
+#
+# From heat.common.wsgi
+#
+
+# Maximum raw byte size of JSON request body. Should be larger than
+# max_template_size. (integer value)
+max_json_body_size = {{ server.get('max_json_body_size', 10880000) }}
+
+#
+# From heat.engine.clients
+#
+
+# Fully qualified class name to use as a client backend. (string value)
+#cloud_backend = heat.engine.clients.OpenStackClients
+
+#
+# From heat.engine.clients.os.keystone.heat_keystoneclient
+#
+
+# Fully qualified class name to use as a keystone backend. (string value)
+#keystone_backend = heat.engine.clients.os.keystone.heat_keystoneclient.KsClientWrapper
+
+#
+# From heat.engine.notification
+#
+
+# Default notification level for outgoingnotifications. (string value)
+#default_notification_level = INFO
+
+# Default publisher_id for outgoing notifications. (string value)
+#default_publisher_id = <None>
+
+#
+# From heat.engine.resources
+#
+
+# Custom template for the built-in loadbalancer nested stack. (string value)
+#loadbalancer_template = <None>
+
+{%- if server.logging is defined %}
+{%- set _data = server.logging %}
+{%- include "oslo_templates/files/queens/oslo/_log.conf" %}
+{%- endif %}
+
+[auth_password]
+
+#
+# From heat.common.config
+#
+
+# Allow orchestration of multiple clouds. (boolean value)
+#multi_cloud = false
+
+# Allowed keystone endpoints for auth_uri when multi_cloud is enabled. At least
+# one endpoint needs to be specified. (list value)
+#allowed_auth_uris =
+
+
+[clients]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = publicURL
+endpoint_type = {{ server.identity.get('endpoint_type_default', 'publicURL') }}
+{%- if server.clients is defined %}
+{%- if server.clients.insecure is defined %}
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = false
+insecure = {{ server.clients.insecure }}
+{%- endif %}
+{%- if server.clients.get('protocol', 'http') == 'https' %}
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+ca_file={{ server.identity.get('cacert_file', server.cacert_file) }}
+{%- endif %}
+{%- endif %}
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+
+[clients_aodh]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_barbican]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_ceilometer]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_cinder]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+# Allow client's debug log output. (boolean value)
+#http_log_debug = false
+
+
+[clients_designate]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_glance]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_heat]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+endpoint_type = {{ server.identity.get('endpoint_type_heat', server.identity.get('endpoint_type_default', 'publicURL')) }}
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+# Optional heat url in format like http://0.0.0.0:8004/v1/%(tenant_id)s.
+# (string value)
+#url =
+
+
+[clients_keystone]
+
+#
+# From heat.common.config
+#
+
+{%- if server.clients is defined %}
+{%- if server.clients.keystone is defined %}
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+insecure = {{ server.clients.keystone.get('insecure', false) }}
+{%- endif %}
+{%- endif %}
+# Unversioned keystone url in format like http://0.0.0.0:5000. (string value)
+#auth_uri =
+auth_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:35357
+{%- if server.identity.get('protocol', 'http') == 'https' %}
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+ca_file={{ server.identity.get('cacert_file', server.cacert_file) }}
+{%- endif %}
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+{%- if pillar.get('opencontrail', {}).get('client', {}).get('enabled', False) %}
+{%- from "opencontrail/map.jinja" import client with context %}
+
+[clients_contrail]
+
+user={{ client.identity.user }}
+password={{ client.identity.password }}
+tenant={{ client.identity.tenant }}
+auth_host_ip={{ client.identity.host }}
+api_server={{ client.api.host }}
+api_port={{ client.api.port }}
+
+{%- endif %}
+
+[clients_magnum]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_manila]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_mistral]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_monasca]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_neutron]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_nova]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+# Allow client's debug log output. (boolean value)
+#http_log_debug = false
+
+
+[clients_octavia]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_sahara]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_senlin]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_swift]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_trove]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[clients_zaqar]
+
+#
+# From heat.common.config
+#
+
+# Type of endpoint in Identity service catalog to use for communication with
+# the OpenStack service. (string value)
+#endpoint_type = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = <None>
+
+
+[ec2authtoken]
+
+#
+# From heat.api.aws.ec2token
+#
+
+# Authentication Endpoint URI. (string value)
+#auth_uri = <None>
+auth_uri = {{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:5000
+
+# Allow orchestration of multiple clouds. (boolean value)
+#multi_cloud = false
+
+# Allowed keystone endpoints for auth_uri when multi_cloud is enabled. At least
+# one endpoint needs to be specified. (list value)
+#allowed_auth_uris =
+
+# Optional PEM-formatted certificate chain file. (string value)
+#cert_file = <None>
+
+# Optional PEM-formatted file that contains the private key. (string value)
+#key_file = <None>
+
+# Optional CA cert file to use in SSL connections. (string value)
+#ca_file = <None>
+{%- if server.identity.get('protocol', 'http') == 'https' %}
+ca_file = {{ server.identity.get('cacert_file', server.cacert_file) }}
+{%- endif %}
+
+# If set, then the server's certificate will not be verified. (boolean value)
+#insecure = false
+
+
+[eventlet_opts]
+
+#
+# From heat.common.wsgi
+#
+
+# If False, closes the client socket connection explicitly. (boolean value)
+#wsgi_keep_alive = true
+
+# Timeout for client connections' socket operations. If an incoming connection
+# is idle for this number of seconds it will be closed. A value of '0' means
+# wait forever. (integer value)
+#client_socket_timeout = 900
+
+
+[heat_api]
+
+#
+# From heat.common.wsgi
+#
+
+# Address to bind the server. Useful when selecting a particular network
+# interface. (IP address value)
+#bind_host = 0.0.0.0
+bind_host = {{ server.bind.api.address }}
+
+# The port on which the server will listen. (port value)
+# Minimum value: 0
+# Maximum value: 65535
+#bind_port = 8004
+
+# Number of backlog requests to configure the socket with. (integer value)
+#backlog = 4096
+
+# Location of the SSL certificate file to use for SSL mode. (string value)
+#cert_file = <None>
+
+# Location of the SSL key file to use for enabling SSL mode. (string value)
+#key_file = <None>
+
+# Number of workers for Heat service. Default value 0 means, that service will
+# start number of workers equal number of cores on server. (integer value)
+# Minimum value: 0
+#workers = 0
+workers = {{ server.get('workers', 4) }}
+
+# Maximum line size of message headers to be accepted. max_header_line may need
+# to be increased when using large tokens (typically those generated by the
+# Keystone v3 API with big service catalogs). (integer value)
+#max_header_line = 16384
+
+# The value for the socket option TCP_KEEPIDLE.  This is the time in seconds
+# that the connection must be idle before TCP starts sending keepalive probes.
+# (integer value)
+#tcp_keepidle = 600
+
+
+[heat_api_cfn]
+
+#
+# From heat.common.wsgi
+#
+
+# Address to bind the server. Useful when selecting a particular network
+# interface. (IP address value)
+bind_host = {{ server.bind.api_cfn.address }}
+
+# The port on which the server will listen. (port value)
+# Minimum value: 0
+# Maximum value: 65535
+#bind_port = 8000
+
+# Number of backlog requests to configure the socket with. (integer value)
+#backlog = 4096
+
+# Location of the SSL certificate file to use for SSL mode. (string value)
+#cert_file = <None>
+
+# Location of the SSL key file to use for enabling SSL mode. (string value)
+#key_file = <None>
+
+# Number of workers for Heat service. (integer value)
+# Minimum value: 0
+#workers = 1
+
+# Maximum line size of message headers to be accepted. max_header_line may need
+# to be increased when using large tokens (typically those generated by the
+# Keystone v3 API with big service catalogs). (integer value)
+#max_header_line = 16384
+
+# The value for the socket option TCP_KEEPIDLE.  This is the time in seconds
+# that the connection must be idle before TCP starts sending keepalive probes.
+# (integer value)
+#tcp_keepidle = 600
+
+
+[heat_api_cloudwatch]
+
+#
+# From heat.common.wsgi
+#
+
+# DEPRECATED: Address to bind the server. Useful when selecting a particular
+# network interface. (IP address value)
+# This option is deprecated for removal since 10.0.0.
+# Its value may be silently ignored in the future.
+# Reason: Heat CloudWatch API has been removed.
+#bind_host = {{ server.bind.api_cloudwatch.address }}
+
+# DEPRECATED: The port on which the server will listen. (port value)
+# Minimum value: 0
+# Maximum value: 65535
+# This option is deprecated for removal since 10.0.0.
+# Its value may be silently ignored in the future.
+# Reason: Heat CloudWatch API has been removed.
+#bind_port = 8003
+
+# DEPRECATED: Number of backlog requests to configure the socket with. (integer
+# value)
+# This option is deprecated for removal since 10.0.0.
+# Its value may be silently ignored in the future.
+# Reason: Heat CloudWatch API has been removed.
+#backlog = 4096
+
+# DEPRECATED: Location of the SSL certificate file to use for SSL mode. (string
+# value)
+# This option is deprecated for removal since 10.0.0.
+# Its value may be silently ignored in the future.
+# Reason: Heat CloudWatch API has been Removed.
+#cert_file = <None>
+
+# DEPRECATED: Location of the SSL key file to use for enabling SSL mode.
+# (string value)
+# This option is deprecated for removal since 10.0.0.
+# Its value may be silently ignored in the future.
+# Reason: Heat CloudWatch API has been Removed.
+#key_file = <None>
+
+# DEPRECATED: Number of workers for Heat service. (integer value)
+# Minimum value: 0
+# This option is deprecated for removal since 10.0.0.
+# Its value may be silently ignored in the future.
+# Reason: Heat CloudWatch API has been Removed.
+#workers = 1
+
+# DEPRECATED: Maximum line size of message headers to be accepted.
+# max_header_line may need to be increased when using large tokens (typically
+# those generated by the Keystone v3 API with big service catalogs.) (integer
+# value)
+# This option is deprecated for removal since 10.0.0.
+# Its value may be silently ignored in the future.
+# Reason: Heat CloudWatch API has been Removed.
+#max_header_line = 16384
+
+# DEPRECATED: The value for the socket option TCP_KEEPIDLE.  This is the time
+# in seconds that the connection must be idle before TCP starts sending
+# keepalive probes. (integer value)
+# This option is deprecated for removal since 10.0.0.
+# Its value may be silently ignored in the future.
+# Reason: Heat CloudWatch API has been Removed.
+#tcp_keepidle = 600
+
+
+[noauth]
+
+#
+# From heat.common.config
+#
+
+# JSON file containing the content returned by the noauth middleware. (string
+# value)
+#token_response =
+
+
+[paste_deploy]
+
+#
+# From heat.common.config
+#
+
+# The flavor to use. (string value)
+#flavor = <None>
+
+# The API paste config file to use. (string value)
+#api_paste_config = api-paste.ini
+
+
+[profiler]
+
+#
+# From heat.common.config
+#
+
+#
+# Enables the profiling for all services on this node. Default value is False
+# (fully disable the profiling feature).
+#
+# Possible values:
+#
+# * True: Enables the feature
+# * False: Disables the feature. The profiling cannot be started via this
+# project
+# operations. If the profiling is triggered by another project, this project
+# part
+# will be empty.
+#  (boolean value)
+# Deprecated group/name - [profiler]/profiler_enabled
+#enabled = false
+
+#
+# Enables SQL requests profiling in services. Default value is False (SQL
+# requests won't be traced).
+#
+# Possible values:
+#
+# * True: Enables SQL requests profiling. Each SQL query will be part of the
+# trace and can the be analyzed by how much time was spent for that.
+# * False: Disables SQL requests profiling. The spent time is only shown on a
+# higher level of operations. Single SQL queries cannot be analyzed this
+# way.
+#  (boolean value)
+#trace_sqlalchemy = false
+
+#
+# Secret key(s) to use for encrypting context data for performance profiling.
+# This string value should have the following format:
+# <key1>[,<key2>,...<keyn>],
+# where each key is some random string. A user who triggers the profiling via
+# the REST API has to set one of these keys in the headers of the REST API call
+# to include profiling results of this node for this particular project.
+#
+# Both "enabled" flag and "hmac_keys" config options should be set to enable
+# profiling. Also, to generate correct profiling information across all
+# services
+# at least one key needs to be consistent between OpenStack projects. This
+# ensures it can be used from client side to generate the trace, containing
+# information from all possible resources. (string value)
+#hmac_keys = SECRET_KEY
+
+#
+# Connection string for a notifier backend. Default value is messaging:// which
+# sets the notifier to oslo_messaging.
+#
+# Examples of possible values:
+#
+# * messaging://: use oslo_messaging driver for sending notifications.
+# * mongodb://127.0.0.1:27017 : use mongodb driver for sending notifications.
+# * elasticsearch://127.0.0.1:9200 : use elasticsearch driver for sending
+# notifications.
+#  (string value)
+#connection_string = messaging://
+
+#
+# Document type for notification indexing in elasticsearch.
+#  (string value)
+#es_doc_type = notification
+
+#
+# This parameter is a time value parameter (for example: es_scroll_time=2m),
+# indicating for how long the nodes that participate in the search will
+# maintain
+# relevant resources in order to continue and support it.
+#  (string value)
+#es_scroll_time = 2m
+
+#
+# Elasticsearch splits large requests in batches. This parameter defines
+# maximum size of each batch (for example: es_scroll_size=10000).
+#  (integer value)
+#es_scroll_size = 10000
+
+#
+# Redissentinel provides a timeout option on the connections.
+# This parameter defines that timeout (for example: socket_timeout=0.1).
+#  (floating point value)
+#socket_timeout = 0.1
+
+#
+# Redissentinel uses a service name to identify a master redis service.
+# This parameter defines the name (for example:
+# sentinal_service_name=mymaster).
+#  (string value)
+#sentinel_service_name = mymaster
+
+#
+# Enable filter traces that contain error/exception to a separated place.
+# Default value is set to False.
+#
+# Possible values:
+#
+# * True: Enable filter traces that contain error/exception.
+# * False: Disable the filter.
+#  (boolean value)
+#filter_error_trace = false
+
+
+[revision]
+
+#
+# From heat.common.config
+#
+
+# Heat build revision. If you would prefer to manage your build revision
+# separately, you can move this section to a different file and add it as
+# another config option. (string value)
+#heat_revision = unknown
+
+
+[trustee]
+
+#
+# From heat.common.context
+#
+
+# Authentication type to load (string value)
+# Deprecated group/name - [trustee]/auth_plugin
+auth_type = password
+
+# Config Section from which to load plugin specific options (string value)
+#auth_section = <None>
+
+# Authentication URL (string value)
+#auth_url = <None>
+auth_url = {{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:35357
+
+# Scope for system operations (string value)
+#system_scope = <None>
+
+# Domain ID to scope to (string value)
+#domain_id = <None>
+
+# Domain name to scope to (string value)
+#domain_name = <None>
+
+# Project ID to scope to (string value)
+# Deprecated group/name - [trustee]/tenant_id
+#project_id = <None>
+
+# Project name to scope to (string value)
+# Deprecated group/name - [trustee]/tenant_name
+#project_name = <None>
+
+# Domain ID containing project (string value)
+#project_domain_id = <None>
+project_domain_id = {{ server.identity.get('domain', 'default') }}
+
+# Domain name containing project (string value)
+#project_domain_name = <None>
+
+# Trust ID (string value)
+#trust_id = <None>
+
+# Optional domain ID to use with v3 and v2 parameters. It will be used for both
+# the user and project domain in v3 and ignored in v2 authentication. (string
+# value)
+#default_domain_id = <None>
+
+# Optional domain name to use with v3 API and v2 parameters. It will be used
+# for both the user and project domain in v3 and ignored in v2 authentication.
+# (string value)
+#default_domain_name = <None>
+
+# User id (string value)
+#user_id = <None>
+
+# Username (string value)
+# Deprecated group/name - [trustee]/user_name
+#username = <None>
+username = {{ server.identity.user }}
+
+# User's domain id (string value)
+#user_domain_id = <None>
+user_domain_id = {{ server.identity.get('domain', 'default') }}
+
+# User's domain name (string value)
+#user_domain_name = <None>
+user_domain_name = {{ server.identity.get('user_domain_name', 'default') }}
+
+# User's password (string value)
+#password = <None>
+password = {{ server.identity.password }}
+
+
+[volumes]
+
+#
+# From heat.common.config
+#
+
+# Indicate if cinder-backup service is enabled. This is a temporary workaround
+# until cinder-backup service becomes discoverable, see LP#1334856. (boolean
+# value)
+#backups_enabled = true
+
+[keystone_authtoken]
+{%- set _data = server.identity %}
+{%- set auth_type = _data.get('auth_type', 'password') %}
+{%- include "oslo_templates/files/queens/keystonemiddleware/_auth_token.conf" %}
+{%- include "oslo_templates/files/queens/keystoneauth/_type_" + auth_type + ".conf" %}
+
+[oslo_messaging_notifications]
+{%- set _data = server.notification %}
+{%- include "oslo_templates/files/queens/oslo/messaging/_notifications.conf" %}
+
+{%- if server.message_queue is defined %}
+{%- set _data = server.message_queue %}
+{%- if _data.engine == 'rabbitmq' %}
+    {%- set messaging_engine = 'rabbit' %}
+{%- else %}
+    {%- set messaging_engine = _data.engine %}
+{%- endif %}
+[oslo_messaging_{{ messaging_engine }}]
+{%- include "oslo_templates/files/queens/oslo/messaging/_" + messaging_engine + ".conf" %}
+{%- endif %}
+
+[cors]
+{%- if server.cors is defined %}
+{%- set _data = server.cors %}
+{%- include "oslo_templates/files/queens/oslo/_cors.conf" %}
+{%- endif %}
+
+[oslo_middleware]
+{%- set _data = server %}
+{%- include "oslo_templates/files/queens/oslo/_middleware.conf" %}
+
+[database]
+{%- set _data = server.database %}
+{%- if _data.ssl is defined and 'cacert_file' not in _data.get('ssl', {}).keys() %}{% do _data['ssl'].update({'cacert_file': server.cacert_file}) %}{% endif %}
+{%- include "oslo_templates/files/queens/oslo/_database.conf" %}
+
+[oslo_policy]
+{%- if server.policy is defined %}
+{%- set _data = server.policy %}
+{%- include "oslo_templates/files/queens/oslo/_policy.conf" %}
+{%- endif %}
+
+[ssl]
+{%- include "oslo_templates/files/queens/oslo/service/_ssl.conf" %}

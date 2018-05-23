@@ -8,13 +8,18 @@
 {% set server = salt['grains.filter_by']({
     'BaseDefaults': default_params,
     'Debian': {
-        'pkgs': ['heat-api', 'heat-api-cfn', 'heat-api-cloudwatch', 'heat-engine', 'heat-common','python-heatclient', 'gettext-base'],
-        'services': ['heat-api', 'heat-api-cfn', 'heat-api-cloudwatch', 'heat-engine'],
+        'pkgs': ['heat-api', 'heat-api-cfn', 'heat-engine', 'heat-common','python-heatclient', 'gettext-base'],
+        'services': ['heat-api', 'heat-api-cfn', 'heat-engine'],
         'notification': False,
         'cors': {},
         'clients': {},
+        'message_queue': {
+          'rpc_response_timeout': 600
+        },
+        'enable_proxy_headers_parsing': true,
         'logging': {
           'log_appender': false,
+          'log_file': '/var/log/heat/heat.log',
           'log_handlers': {
             'watchedfile': {
               'enabled': true
@@ -28,8 +33,13 @@
         'notification': False,
         'cors': {},
         'clients': {},
+        'message_queue': {
+          'rpc_response_timeout': 600
+        },
+        'enable_proxy_headers_parsing': true,
         'logging': {
           'log_appender': false,
+          'log_file': '/var/log/heat/heat.log',
           'log_handlers': {
             'watchedfile': {
               'enabled': true
@@ -38,6 +48,11 @@
         },
     },
 }, merge=pillar.heat.get('server', {}), base='BaseDefaults') %}
+
+{%- if server.version in ["juno", "kilo", "liberty", "mitaka", "newton", "ocata", "pike"] %}
+  {%- do server.pkgs.append('heat-api-cloudwatch') %}
+  {%- do server.services.append('heat-api-cloudwatch') %}
+{%- endif %}
 
 {% set client = salt['grains.filter_by']({
     'Debian': {
