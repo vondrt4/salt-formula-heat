@@ -6,7 +6,7 @@
 {% raw %}
 server:
   alert:
-    HeatAPIDown:
+    HeatApiDown:
       if: >-
         openstack_api_check_status{name=~"heat.*"} == 0
       labels:
@@ -16,7 +16,7 @@ server:
         summary: "{{ $labels.name }} endpoint is not accessible"
         description: >-
           Heat API is not accessible for the {{ $labels.name }} endpoint.
-    HeatAPIOutage:
+    HeatApiOutage:
       if: >-
         max(openstack_api_check_status{name=~"heat.*"}) == 0
       labels:
@@ -26,7 +26,7 @@ server:
         summary: "Heat API outage"
         description: >-
           Heat API is not accessible for all available Heat endpoints in the OpenStack service catalog.
-    HeatAPIServiceDown:
+    HeatApiEndpointDown:
       if: >-
         http_response_status{name=~"heat.*-api"} == 0
       for: 2m
@@ -34,11 +34,11 @@ server:
         severity: minor
         service: heat
       annotations:
-        summary: "Host {{ $labels.name }} endpoint is not accessible"
+        summary: "{{ $labels.name }} endpoint is not accessible"
         description: >-
-          The host {{ $labels.name }} endpoint on the {{ $labels.host }} node is not accessible for at least 2 minutes.
+          The {{ $labels.name }} endpoint on the {{ $labels.host }} node is not accessible for 2 minutes.
 {%- endraw %}
-    HeatAPIServiceDownMajor:
+    HeatApiEndpointsDownMajor:
       if: >-
         count(http_response_status{name=~"heat.*-api"} == 0) by (name) >= count(http_response_status{name=~"heat.*-api"}) by (name) * {{ major_threshold }}
       for: 2m
@@ -46,10 +46,10 @@ server:
         severity: major
         service: heat
       annotations:
-        summary: "{{major_threshold * 100}}% of host {% raw %}{{ $labels.name }} endpoints are not accessible"
+        summary: "{{major_threshold * 100}}% of {% raw %}{{ $labels.name }} endpoints are not accessible"
         description: >-
-          {{ $value }} host {{ $labels.name }} endpoints are not accessible for at least 2 minutes (at least {% endraw %}{{major_threshold * 100}}{% raw %}%).
-    HeatAPIServiceOutage:
+          {{ $value }} {{ $labels.name }} endpoints (>= {% endraw %}{{major_threshold * 100}}{% raw %}%) are not accessible for 2 minutes.
+    HeatApiEndpointsOutage:
       if: >-
         count(http_response_status{name=~"heat.*-api"} == 0) by (name) == count(http_response_status{name=~"heat.*-api"}) by (name)
       for: 2m
@@ -57,9 +57,9 @@ server:
         severity: critical
         service: heat
       annotations:
-        summary: "Host {{ $labels.name }} outage"
+        summary: "{{ $labels.name }} endpoints outage"
         description: >-
-          All available host {{ $labels.name }} endpoints are not accessible for at least 2 minutes.
+          All available {{ $labels.name }} endpoints are not accessible for 2 minutes.
 {%- endraw %}
     HeatErrorLogsTooHigh:
       {%- set log_threshold = monitoring.error_log_rate|float %}
