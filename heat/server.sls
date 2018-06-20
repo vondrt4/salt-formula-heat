@@ -94,7 +94,7 @@ heat_general_logging_conf:
 {%- for name, rule in server.get('policy', {}).iteritems() %}
 
 {%- if rule != None %}
-rule_{{ name }}_present:
+heat_keystone_rule_{{ name }}_present:
   keystone_policy.rule_present:
   - path: /etc/heat/policy.json
   - name: {{ name }}
@@ -104,7 +104,7 @@ rule_{{ name }}_present:
 
 {%- else %}
 
-rule_{{ name }}_absent:
+heat_keystone_rule_{{ name }}_absent:
   keystone_policy.rule_absent:
   - path: /etc/heat/policy.json
   - name: {{ name }}
