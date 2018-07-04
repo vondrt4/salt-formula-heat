@@ -1327,6 +1327,12 @@ ca_file={{ server.identity.get('cacert_file', server.cacert_file) }}
 [clients_heat]
 endpoint_type = {{ server.identity.get('endpoint_type_heat',
                                        server.identity.get('endpoint_type_default', 'publicURL')) }}
+{%- if server.clients is defined %}
+{%- if server.clients.heat is defined %}
+insecure = {{ server.clients.heat.get('insecure', False) }}
+{%- endif %}
+{%- endif %}
+
 [clients_keystone]
 {%- if server.clients is defined %}
 {%- if server.clients.keystone is defined %}
