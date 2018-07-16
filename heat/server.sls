@@ -46,13 +46,13 @@ heat_fluentd_logger_package:
 heat_general_logging_conf:
   file.managed:
     - name: /etc/heat/logging.conf
-    - source: salt://heat/files/logging.conf
+    - source: salt://oslo_templates/files/logging/_logging.conf
     - template: jinja
     - user: heat
     - group: heat
     - defaults:
         service_name: heat
-        values: {{ server }}
+        _data: {{ server.logging }}
     - require:
       - pkg: heat_server_packages
 {%- if server.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
@@ -72,14 +72,14 @@ heat_general_logging_conf:
 {{ service_name }}_logging_conf:
   file.managed:
     - name: /etc/heat/logging/logging-{{ service_name }}.conf
-    - source: salt://heat/files/logging.conf
+    - source: salt://oslo_templates/files/logging/_logging.conf
     - template: jinja
     - makedirs: True
     - user: heat
     - group: heat
     - defaults:
         service_name: {{ service_name }}
-        values: {{ server }}
+        _data: {{ server.logging }}
     - require:
       - pkg: heat_server_packages
 {%- if server.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
