@@ -1299,7 +1299,8 @@ max_overflow = 60
 #
 
 # Authentication Endpoint URI. (string value)
-auth_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:5000
+# NOTE(vsaienko) autodiscovery doesn't work here. Set version explicitly
+auth_uri={{ server.identity.get('protocol', 'http') }}://{{ server.identity.host }}:5000/v3
 
 # Allow orchestration of multiple clouds. (boolean value)
 #multi_cloud=false
