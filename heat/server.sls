@@ -1,9 +1,14 @@
 {%- from "heat/map.jinja" import server with context %}
 {%- if server.enabled %}
 
+include:
+  - heat.db.offline_sync
+
 heat_server_packages:
   pkg.installed:
   - names: {{ server.pkgs }}
+  - require_in:
+    - sls: heat.db.offline_sync
 
 /etc/heat/heat.conf:
   file.managed:
@@ -11,6 +16,8 @@ heat_server_packages:
   - template: jinja
   - require:
     - pkg: heat_server_packages
+  - require_in:
+    - sls: heat.db.offline_sync
 
 /etc/heat/api-paste.ini:
   file.managed:
@@ -143,22 +150,12 @@ heat_keystone_setup:
   - require:
     - file: /etc/heat/heat.conf
     - pkg: heat_server_packages
-  - require_in:
-    - cmd: heat_syncdb
-
-{%- endif %}
-
-{%- endif %}
-
-heat_syncdb:
-  cmd.run:
-  - name: heat-manage db_sync
-  {%- if grains.get('noservices') %}
-  - onlyif: /bin/false
-  {%- endif %}
   - require:
-    - file: /etc/heat/heat.conf
-    - pkg: heat_server_packages
+    - sls: heat.db.offline_sync
+
+{%- endif %}
+
+{%- endif %}
 
 heat_log_access:
   cmd.run:
@@ -180,7 +177,7 @@ heat_server_services:
   - onlyif: /bin/false
   {%- endif %}
   - require:
-    - cmd: heat_syncdb
+    - sls: heat.db.offline_sync
   - watch:
     - file: /etc/heat/heat.conf
     - file: /etc/heat/api-paste.ini
