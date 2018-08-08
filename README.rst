@@ -1,7 +1,7 @@
 
-============
-Heat Formula
-============
+=====
+Usage
+=====
 
 Heat is the main project in the OpenStack Orchestration program. It implements
 an orchestration engine to launch multiple composite cloud applications based
@@ -14,7 +14,7 @@ both an OpenStack-native ReST API and a CloudFormation-compatible Query API.
 Sample Pillars
 ==============
 
-Single Heat services on the controller node
+Single Heat services on the controller node:
 
 .. code-block:: yaml
 
@@ -69,7 +69,7 @@ Single Heat services on the controller node
         max_stacks_per_tenant: 150
         max_nested_stack_depth: 10
 
-Define server clients keystone parameter
+Define server clients Keystone parameter:
 
 .. code-block:: yaml
 
@@ -82,7 +82,7 @@ Define server clients keystone parameter
             port: 5000
             insecure: false
 
-Enable CORS parameters
+Enable CORS parameters:
 
 .. code-block:: yaml
 
@@ -96,8 +96,7 @@ Enable CORS parameters
           allow_credentials: True
           max_age: 86400
 
-
-Heat client with specified git templates
+Heat client with specified git templates:
 
 .. code-block:: yaml
 
@@ -118,8 +117,7 @@ Heat client with specified git templates
               address: git@repo.domain.com/default-templates.git
               revision: master
 
-
-Ceilometer notification
+Ceilometer notification:
 
 .. code-block:: yaml
 
@@ -129,7 +127,7 @@ Ceilometer notification
         version: icehouse
         notification: true
 
-Configuration of policy.json file
+Configuration of ``policy.json`` file:
 
 .. code-block:: yaml
 
@@ -142,8 +140,7 @@ Configuration of policy.json file
           # Add key without value to remove line from policy.json
           'cloudformation:DescribeStackResource':
 
-
-Client-side RabbitMQ HA setup
+Client-side RabbitMQ HA setup:
 
 .. code-block:: yaml
 
@@ -161,55 +158,51 @@ Client-side RabbitMQ HA setup
           virtual_host: '/openstack'
         ....
 
-
-
 Configuring TLS communications
 -------------------------------
 
+.. note:: By default, system-wide installed CA certs are used, so the
+          ``cacert_file`` param is optional, as well as ``cacert``.
 
- **Note:** by default system wide installed CA certs are used, so ``cacert_file`` param is optional, as well as ``cacert``.
+- **RabbitMQ TLS**
 
+  .. code-block:: yaml
 
- - **RabbitMQ TLS**
-
- .. code-block:: yaml
-
-  heat:
+   heat:
     server:
-       message_queue:
-         port: 5671
-         ssl:
-           enabled: True
-           (optional) cacert: cert body if the cacert_file does not exists
-           (optional) cacert_file: /etc/openstack/rabbitmq-ca.pem
-           (optional) version: TLSv1_2
+        message_queue:
+          port: 5671
+          ssl:
+            enabled: True
+            (optional) cacert: cert body if the cacert_file does not exists
+            (optional) cacert_file: /etc/openstack/rabbitmq-ca.pem
+            (optional) version: TLSv1_2
 
+- **MySQL TLS**
 
- - **MySQL TLS**
+  .. code-block:: yaml
 
- .. code-block:: yaml
+   heat:
+     server:
+        database:
+          ssl:
+            enabled: True
+            (optional) cacert: cert body if the cacert_file does not exists
+            (optional) cacert_file: /etc/openstack/mysql-ca.pem
 
-  heat:
+- **Openstack HTTPS API**
+
+  .. code-block:: yaml
+
+   heat:
     server:
-       database:
-         ssl:
-           enabled: True
-           (optional) cacert: cert body if the cacert_file does not exists
-           (optional) cacert_file: /etc/openstack/mysql-ca.pem
-
- - **Openstack HTTPS API**
-
- .. code-block:: yaml
-
-  heat:
-   server:
-       identity:
-          protocol: https
-          (optional) cacert_file: /etc/openstack/proxy.pem
-       clients:
-          keystone:
-            protocol: https
-            (optional) cacert_file: /etc/openstack/proxy.pem
+        identity:
+           protocol: https
+           (optional) cacert_file: /etc/openstack/proxy.pem
+        clients:
+           keystone:
+             protocol: https
+             (optional) cacert_file: /etc/openstack/proxy.pem
 
 Enhanced logging with logging.conf
 ----------------------------------
@@ -217,13 +210,20 @@ Enhanced logging with logging.conf
 By default logging.conf is disabled.
 
 That is possible to enable per-binary logging.conf with new variables:
-  * openstack_log_appender - set it to true to enable log_config_append for all OpenStack services;
-  * openstack_fluentd_handler_enabled - set to true to enable FluentHandler for all Openstack services.
-  * openstack_ossyslog_handler_enabled - set to true to enable OSSysLogHandler for all Openstack services.
 
-Only WatchedFileHandler, OSSysLogHandler and FluentHandler are available.
+* ``openstack_log_appender``
+   Set to true to enable ``log_config_append`` for all OpenStack services
 
-Also it is possible to configure this with pillar:
+* ``openstack_fluentd_handler_enabled``
+   Set to true to enable ``FluentHandler`` for all Openstack services
+
+* ``openstack_ossyslog_handler_enabled``
+   Set to true to enable ``OSSysLogHandler`` for all Openstack services
+
+Only `WatchedFileHandler``, ``OSSysLogHandler``, and ``FluentHandler`` are
+available.
+
+Also, it is possible to configure this with pillar:
 
 .. code-block:: yaml
 
@@ -242,32 +242,26 @@ Also it is possible to configure this with pillar:
 Documentation and Bugs
 ======================
 
-To learn how to install and update salt-formulas, consult the documentation
-available online at:
+* http://salt-formulas.readthedocs.io/
+   Learn how to install and update salt-formulas
 
-    http://salt-formulas.readthedocs.io/
+* https://github.com/salt-formulas/salt-formula-heat/issues
+   In the unfortunate event that bugs are discovered, report the issue to the
+   appropriate issue tracker. Use the Github issue tracker for a specific salt
+   formula
 
-In the unfortunate event that bugs are discovered, they should be reported to
-the appropriate issue tracker. Use Github issue tracker for specific salt
-formula:
+* https://launchpad.net/salt-formulas
+   For feature requests, bug reports, or blueprints affecting the entire
+   ecosystem, use the Launchpad salt-formulas project
 
-    https://github.com/salt-formulas/salt-formula-heat/issues
+* https://launchpad.net/~salt-formulas-users
+   Join the salt-formulas-users team and subscribe to mailing list if required
 
-For feature requests, bug reports or blueprints affecting entire ecosystem,
-use Launchpad salt-formulas project:
+* https://github.com/salt-formulas/salt-formula-heat
+   Develop the salt-formulas projects in the master branch and then submit pull
+   requests against a specific formula
 
-    https://launchpad.net/salt-formulas
+* #salt-formulas @ irc.freenode.net
+   Use this IRC channel in case of any questions or feedback which is always
+   welcome
 
-You can also join salt-formulas-users team and subscribe to mailing list:
-
-    https://launchpad.net/~salt-formulas-users
-
-Developers wishing to work on the salt-formulas projects should always base
-their work on master branch and submit pull request against specific formula.
-
-    https://github.com/salt-formulas/salt-formula-heat
-
-Any questions or feedback is always welcome so feel free to join our IRC
-channel:
-
-    #salt-formulas @ irc.freenode.net
