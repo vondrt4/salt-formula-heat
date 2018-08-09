@@ -1,6 +1,6 @@
 from yaml import safe_load
 import json
-import common
+from heatv1 import common
 try:
     from urllib.parse import urlencode
 except ImportError:

@@ -11,14 +11,8 @@ try:
 except ImportError:
     REQUIREMENTS_MET = False
 
-import os
-import sys
 
-# i failed to load module witjout this
-# seems bugs in salt or it is only me
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-
-import stack
+from heatv1 import stack
 
 stack_create = stack.stack_create
 stack_delete = stack.stack_delete

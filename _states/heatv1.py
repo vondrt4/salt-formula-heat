@@ -28,6 +28,10 @@ def _poll_for_complete(stack_name, cloud_name=None, action=None,
                            name=stack_name,
                            cloud_name=cloud_name)
         if not stack["result"]:
+            if action == "DELETE" and stack['status_code'] == 404:
+                stack_status = 'DELETE COMPLETE'
+                msg = msg_template % dict(name=stack_name, status=stack_status)
+                return 'DELETE_COMPLETE', msg
             raise Exception("request for stack failed")
 
         stack = stack["body"]["stack"]
