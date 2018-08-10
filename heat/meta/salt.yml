@@ -12,3 +12,8 @@ orchestrate:
   client:
     priority: 720
 
+orchestration:
+  upgrade:
+    applications:
+      heat:
+        priority: 1250
