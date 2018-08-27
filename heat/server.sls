@@ -14,6 +14,8 @@ heat_server_packages:
   file.managed:
   - source: salt://heat/files/{{ server.version }}/heat.conf.{{ grains.os_family }}
   - template: jinja
+  - mode: 0640
+  - group: heat
   - require:
     - pkg: heat_server_packages
   - require_in:
@@ -23,6 +25,8 @@ heat_server_packages:
   file.managed:
   - source: salt://heat/files/{{ server.version }}/api-paste.ini
   - template: jinja
+  - mode: 0640
+  - group: heat
   - require:
     - pkg: heat_server_packages
 
@@ -55,7 +59,8 @@ heat_general_logging_conf:
     - name: /etc/heat/logging.conf
     - source: salt://oslo_templates/files/logging/_logging.conf
     - template: jinja
-    - user: heat
+    - mode: 0640
+    - user: root
     - group: heat
     - defaults:
         service_name: heat
@@ -82,7 +87,8 @@ heat_general_logging_conf:
     - source: salt://oslo_templates/files/logging/_logging.conf
     - template: jinja
     - makedirs: True
-    - user: heat
+    - mode: 0640
+    - user: root
     - group: heat
     - defaults:
         service_name: {{ service_name }}
@@ -217,5 +223,15 @@ mysql_ca_heat_server:
    - require_in:
      - file: /etc/heat/heat.conf
 {%- endif %}
+
+correct_file_permissions_heat:
+  cmd.run:
+    - name: find /etc/heat -type f \( \! -perm 640 -o \! -user root -o \! -group heat \) -execdir chmod 640 {} + -execdir chown root:heat {} +
+    - onlyif: find /etc/heat -type f \( \! -perm 640 -o \! -user root -o \! -group heat \) -printf found | grep -q found
+
+correct_dir_permissions_heat:
+  cmd.run:
+    - name: find /etc/heat -type d \( \! -perm 750 -o \! -user root -o \! -group heat \) -execdir chmod 750 {} + -execdir chown root:heat {} +
+    - onlyif: find /etc/heat -type d \( \! -perm 750 -o \! -user root -o \! -group heat \) -printf found | grep -q found
 
 {%- endif %}
