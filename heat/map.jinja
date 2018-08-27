@@ -71,3 +71,5 @@
         'endpoint_failed_major_threshold': 0.5,
     },
 }, grain='os_family', merge=salt['pillar.get']('heat:monitoring')) %}
+
+{% set upgrade = pillar.get('heat', {}).get('upgrade', {}) %}
