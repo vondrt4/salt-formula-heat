@@ -2,7 +2,7 @@ heat:
   server:
     enabled: true
     region: RegionOne
-    version: liberty
+    version: ocata
     stack_domain_admin:
       name: heat_domain_admin
       password: password
