@@ -82,6 +82,16 @@ Define server clients Keystone parameter:
             port: 5000
             insecure: false
 
+Server with auth_encryption_key defined:
+
+.. code-block:: yaml
+
+    heat:
+      server:
+        ....
+        server.auth_encryption_key: "KeyToEncrypt-hasToBeExact32Chars"
+        ....
+
 Enable CORS parameters:
 
 .. code-block:: yaml

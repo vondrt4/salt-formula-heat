@@ -273,7 +273,9 @@ max_nested_stack_depth = {{ server.max_nested_stack_depth }}
 
 # Key used to encrypt authentication info in the database. Length of this key
 # must be 32 characters. (string value)
-#auth_encryption_key = notgood but just long enough i t
+{%- if server.auth_encryption_key is defined %}
+auth_encryption_key = "{{ server.auth_encryption_key }}"
+{%- endif %}
 
 #
 # From heat.common.wsgi

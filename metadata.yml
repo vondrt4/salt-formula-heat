@@ -4,3 +4,6 @@ source: "https://github.com/salt-formulas/salt-formula-heat"
 dependencies:
 - name: keystone
   source: "https://github.com/salt-formulas/salt-formula-keystone"
+dependencies:
+- name: oslo_templates
+  source: "https://github.com/salt-formulas/salt-formula-oslo-templates"
