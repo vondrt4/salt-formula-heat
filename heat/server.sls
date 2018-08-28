@@ -224,14 +224,4 @@ mysql_ca_heat_server:
      - file: /etc/heat/heat.conf
 {%- endif %}
 
-correct_file_permissions_heat:
-  cmd.run:
-    - name: find /etc/heat -type f \( \! -perm 640 -o \! -user root -o \! -group heat \) -execdir chmod 640 {} + -execdir chown root:heat {} +
-    - onlyif: find /etc/heat -type f \( \! -perm 640 -o \! -user root -o \! -group heat \) -printf found | grep -q found
-
-correct_dir_permissions_heat:
-  cmd.run:
-    - name: find /etc/heat -type d \( \! -perm 750 -o \! -user root -o \! -group heat \) -execdir chmod 750 {} + -execdir chown root:heat {} +
-    - onlyif: find /etc/heat -type d \( \! -perm 750 -o \! -user root -o \! -group heat \) -printf found | grep -q found
-
 {%- endif %}
