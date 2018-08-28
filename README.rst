@@ -89,7 +89,7 @@ Server with auth_encryption_key defined:
     heat:
       server:
         ....
-        server.auth_encryption_key: "KeyToEncrypt-hasToBeExact32Chars"
+        auth_encryption_key: "KeyToEncrypt-hasToBeExact32Chars"
         ....
 
 Enable CORS parameters:
