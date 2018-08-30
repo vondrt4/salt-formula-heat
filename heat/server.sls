@@ -1,8 +1,14 @@
 {%- from "heat/map.jinja" import server with context %}
+
 {%- if server.enabled %}
+
+{%- set mysql_x509_ssl_enabled = server.database.get('x509',{}).get('enabled',False) or server.database.get('ssl',{}).get('enabled',False) %}
 
 include:
   - heat.db.offline_sync
+  {%- if mysql_x509_ssl_enabled %}
+  - heat._ssl.mysql
+  {%- endif %}
 
 heat_server_packages:
   pkg.installed:
@@ -184,14 +190,14 @@ heat_server_services:
   {%- endif %}
   - require:
     - sls: heat.db.offline_sync
+    {%- if mysql_x509_ssl_enabled %}
+    - sls: heat._ssl.mysql
+    {%- endif %}
   - watch:
     - file: /etc/heat/heat.conf
     - file: /etc/heat/api-paste.ini
     {%- if server.message_queue.get('ssl',{}).get('enabled', False) %}
     - file: rabbitmq_ca_heat_server
-    {%- endif %}
-    {%- if server.database.get('ssl',{}).get('enabled', False) %}
-    - file: mysql_ca_heat_server
     {%- endif %}
 
 {%- if server.message_queue.get('ssl',{}).get('enabled', False) %}
@@ -206,22 +212,6 @@ rabbitmq_ca_heat_server:
   file.exists:
    - name: {{ server.message_queue.ssl.get('cacert_file', server.cacert_file) }}
 {%- endif %}
-{%- endif %}
-
-{%- if server.database.get('ssl',{}).get('enabled', False) %}
-mysql_ca_heat_server:
-{%- if server.database.ssl.cacert is defined %}
-  file.managed:
-    - name: {{ server.database.ssl.cacert_file }}
-    - contents_pillar: heat:server:database:ssl:cacert
-    - mode: 0444
-    - makedirs: true
-{%- else %}
-  file.exists:
-   - name: {{ server.database.ssl.get('cacert_file', server.cacert_file) }}
-{%- endif %}
-   - require_in:
-     - file: /etc/heat/heat.conf
 {%- endif %}
 
 {%- endif %}
