@@ -2,13 +2,9 @@
 
 {%- if server.enabled %}
 
-{%- set mysql_x509_ssl_enabled = server.database.get('x509',{}).get('enabled',False) or server.database.get('ssl',{}).get('enabled',False) %}
-
 include:
   - heat.db.offline_sync
-  {%- if mysql_x509_ssl_enabled %}
   - heat._ssl.mysql
-  {%- endif %}
 
 heat_server_packages:
   pkg.installed:
@@ -24,6 +20,7 @@ heat_server_packages:
   - group: heat
   - require:
     - pkg: heat_server_packages
+    - sls: heat._ssl.mysql
   - require_in:
     - sls: heat.db.offline_sync
 
@@ -164,7 +161,7 @@ heat_keystone_setup:
   - require:
     - file: /etc/heat/heat.conf
     - pkg: heat_server_packages
-  - require:
+    - sls: heat._ssl.mysql
     - sls: heat.db.offline_sync
 
 {%- endif %}
@@ -192,9 +189,7 @@ heat_server_services:
   {%- endif %}
   - require:
     - sls: heat.db.offline_sync
-    {%- if mysql_x509_ssl_enabled %}
     - sls: heat._ssl.mysql
-    {%- endif %}
   - watch:
     - file: /etc/heat/heat.conf
     - file: /etc/heat/api-paste.ini
