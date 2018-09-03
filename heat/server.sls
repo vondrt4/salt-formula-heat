@@ -65,6 +65,8 @@ heat_general_logging_conf:
     - defaults:
         service_name: heat
         _data: {{ server.logging }}
+    - require_in:
+      - sls: heat.db.offline_sync
     - require:
       - pkg: heat_server_packages
 {%- if server.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
