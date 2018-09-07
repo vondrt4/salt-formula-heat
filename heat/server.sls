@@ -10,6 +10,7 @@ heat_server_packages:
   pkg.installed:
   - names: {{ server.pkgs }}
   - require_in:
+    - sls: heat._ssl.mysql
     - sls: heat.db.offline_sync
 
 /etc/heat/heat.conf:
