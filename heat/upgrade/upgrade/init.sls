@@ -6,8 +6,10 @@ heat_upgrade:
     - text: "Running heat.upgrade.upgrade"
 
 include:
+ - heat.upgrade.upgrade.pre
  - heat.upgrade.service_stopped
  - heat.upgrade.pkgs_latest
  - heat.upgrade.render_config
  - heat.db.offline_sync
  - heat.upgrade.service_running
+ - heat.upgrade.upgrade.post
