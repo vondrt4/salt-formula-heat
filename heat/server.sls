@@ -5,12 +5,14 @@
 include:
   - heat.db.offline_sync
   - heat._ssl.mysql
+  - heat._ssl.rabbitmq
 
 heat_server_packages:
   pkg.installed:
   - names: {{ server.pkgs }}
   - require_in:
     - sls: heat._ssl.mysql
+    - sls: heat._ssl.rabbitmq
     - sls: heat.db.offline_sync
 
 /etc/heat/heat.conf:
@@ -22,6 +24,7 @@ heat_server_packages:
   - require:
     - pkg: heat_server_packages
     - sls: heat._ssl.mysql
+    - sls: heat._ssl.rabbitmq
   - require_in:
     - sls: heat.db.offline_sync
 
@@ -163,6 +166,7 @@ heat_keystone_setup:
     - file: /etc/heat/heat.conf
     - pkg: heat_server_packages
     - sls: heat._ssl.mysql
+    - sls: heat._ssl.rabbitmq
     - sls: heat.db.offline_sync
 
 {%- endif %}
@@ -191,6 +195,7 @@ heat_server_services:
   - require:
     - sls: heat.db.offline_sync
     - sls: heat._ssl.mysql
+    - sls: heat._ssl.rabbitmq
   - watch:
     - file: /etc/heat/heat.conf
     - file: /etc/heat/api-paste.ini
