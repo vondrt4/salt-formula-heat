@@ -69,3 +69,16 @@ heat:
       'cloudformation:DescribeStackResource':
     max_stacks_per_tenant: 150
     max_nested_stack_depth: 10
+    cache:
+      engine: memcached
+      members:
+      - host: 127.0.0.1
+        port: 11211
+      - host: 127.0.1.1
+        port: 11211
+      - host: 127.0.2.1
+        port: 11211
+      security:
+        enabled: true
+        strategy: ENCRYPT
+        secret_key: secret
