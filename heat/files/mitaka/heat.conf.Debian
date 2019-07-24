@@ -63,6 +63,7 @@ log_file=/var/log/heat/heat.log
 #use_syslog = false
 
 workers=2
+num_engine_workers=2
 
 {%- if server.stack_domain_admin is defined %}
 
