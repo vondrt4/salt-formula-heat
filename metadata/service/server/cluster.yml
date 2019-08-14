@@ -33,15 +33,15 @@ parameters:
         user: heat
         password: ${_param:mysql_heat_password}
       metadata:
-        host: ${_param:cluster_vip_address}
+        host: ${_param:cluster_ext_int_domain_name}
         port: 8000
         protocol: http
       waitcondition:
-        host: ${_param:cluster_vip_address}
+        host: ${_param:cluster_ext_int_domain_name}
         port: 8000
         protocol: http
       watch:
-        host: ${_param:cluster_vip_address}
+        host: ${_param:cluster_ext_int_domain_name}
         port: 8003
         protocol: http
       identity:
